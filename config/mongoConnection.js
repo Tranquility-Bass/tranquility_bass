@@ -12,6 +12,7 @@ module.exports = {
       _db = await _connection.db(mongoConfig.database);
     }
 
+    
     return _db;
   },
   closeConnection: () => {

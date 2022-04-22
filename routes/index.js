@@ -2,7 +2,8 @@ const bandsRoutes = require('./bands');
 const albumsRoutes = require('./albums');
 
 const constructorMethod = (app) => {
-  app.use('/bands', bandsRoutes);
+  app.use('/login', bandsRoutes);
+  app.use('/signup', bandsRoutes);
   app.use('/albums', albumsRoutes);
 
   app.use('*', (req, res) => {
