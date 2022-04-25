@@ -1,6 +1,45 @@
 <h1> {{title}} </h1>
 <section>
+    <h3>Top Three Artists</h3>
+
+    {{#if emptyArtist}}
+        <p>No Popular Artists Found</p>
+    {{/if}}
+
     {{#each topArtists}}
-    
+        <h6>
+            <a href="/{{_id}}">{{name}}</a>
+        </h6>
+        <h7>Likes: {{likes}}</h7>
+    {{/each}}
+</section>
+
+<section>
+    <h3>Top Three Albums</h3>
+
+    {{#if emptyAlbum}}
+        <p>No Popular Albums Found</p>
+    {{/if}}
+
+    {{#each topAlbums}}
+        <h6>
+            <a href="/{{_id}}">{{name}}</a>
+        </h6>
+        <h7>Likes: {{likes}}</h7>
+    {{/each}}
+</section>
+
+<section>
+    <h3>Top Three Songs</h3>
+
+    {{#if emptySong}}
+        <p>No Popular Songs Found</p>
+    {{/if}}
+
+    {{#each topSongs}}
+        <h6>
+            <a href="/{{_id}}">{{name}}</a>
+        </h6>
+        <h7>Likes: {{likes}}</h7>
     {{/each}}
 </section>
