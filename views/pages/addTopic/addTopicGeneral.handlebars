@@ -1,0 +1,13 @@
+<section>
+  {{#if hasError}}
+  <p>{{error}}</p>
+  {{/if}}
+  <form id="addTopic-form" action="/private/addTopic" method="POST">
+    <label for="type">Topic Type</label>
+    <select id="type" name="type">
+    <option value="artist">Artist</option>
+    <option value="album">Album</option>
+    </select>
+    <button type="submit">Next</button>
+  </form>
+</section>

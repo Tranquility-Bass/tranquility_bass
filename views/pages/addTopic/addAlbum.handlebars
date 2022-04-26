@@ -1,0 +1,19 @@
+<section>
+  {{#if hasError}}
+  <p>{{error}}</p>
+  {{/if}}
+  <form id="addAlbum-form" action="/private/addTopic/album" method="POST">
+    <label for="artist">Artist Name: </label>
+    <select id="artist" name="artist"></select>
+    {{#each artist}}
+    <option value={{artist._id}}>{{artist.name}}</option>
+    {{/each}}
+
+    <label for="albumName">Album Name: </label>
+    <input type="text" id="albumName" name="albumName">
+
+    <label for="albumSongs">Songs: </label>
+    <textarea id="albumSongs" name="albumSongs" rows="6" cols="40">Enter each song on a new line.</textarea>
+    <button type="submit">Next</button>
+  </form>
+</section>

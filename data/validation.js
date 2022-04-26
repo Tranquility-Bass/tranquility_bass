@@ -1,6 +1,9 @@
 function checkInput(val, varName, varType) {
     if (val == undefined) throw `${varName} is not defined`;
     if (varType == "array") {
+        if (varName == "albumSongs") {
+            val = val.split(" ");
+        }
         if (!Array.isArray(val)) throw `${varName} is not an array`;
         let i = 0;
         let arr = [];
@@ -18,7 +21,8 @@ function checkInput(val, varName, varType) {
     else if (varType == "string") {
         if (typeof val != 'string') throw `${varName} is not a string.`;
         val = String.prototype.trim.call(val);
-        if (val.length == 0) throw `${varName} is empty.`
+        if (val.length == 0) throw `${varName} is empty.`;
+        if (checkHateSpeech(val)) throw `${varName} contains inappropiate content.`;
         if (varName == "releaseDate") { //https://stackoverflow.com/questions/7445328/check-if-a-string-is-a-date-value
             let date = moment(val, "MM/DD/YYYY", true);
             if (!date.isValid()) throw `${varName} is not a valid date.`

@@ -92,4 +92,47 @@ async function getTopSongs(){
     return top3;
 }
 
-module.exports = {getTopAlbums, getTopSongs};
+async function createAlbum(artistId, title, songs) {
+    if (arguments.length > 3) throw `Too many arguments passed.`
+    artistId = checkInput(artistId, "artist id", "string");
+    if (!ObjectId.isValid(artistId)) throw `artist id is not a valid ObjectId`;
+    title = checkInput(title, 'title', 'string');
+    songs = checkInput(songs, 'songs','array');
+
+    let songList;
+    songs.forEach(element => {
+        let val = {
+            _id: ObjectId(),
+            title : element,
+            reviews : [],
+            discussions : [],
+            avgRating : 0
+        }
+        songList += val;
+    })
+
+    const artistCollection = await artists();
+    const getArtist = await artistCollection.findOne({_id: artistId});
+
+    if (!getArtist) throw `Band does not exist.`;
+
+    let newAlbum = {
+      _id: ObjectId(),
+      title: title,
+      songs: songList,
+      reviews : [],
+      discussions : [],
+      avgRating : 0
+    };
+
+    const insertInfo = await artistCollection.updateOne(
+        {_id: artistId},
+        {$addToSet: {albums: newAlbum}}
+    );
+    if (insertInfo.modifiedCount === 0) throw 'Could not add album';
+
+    newAlbum._id = newAlbum._id.toString();
+    return newAlbum;
+}
+
+module.exports = {getTopAlbums, getTopSongs, createAlbum};
