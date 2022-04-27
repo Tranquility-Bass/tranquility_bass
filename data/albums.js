@@ -3,17 +3,17 @@ const mongoCollections = require("../config/mongoCollections")
 const artists = mongoCollections.artists;
 const validate = require("./validation");
 
-async function getAllAlbumsFromArtist(bandId) {
+async function getAllAlbumsFromArtist(artistId) {
     if (arguments.length > 1) throw `Too many arguments passed.`;
-    bandId = validate.checkInput(bandId, "band id", "string");
-    if (!ObjectId.isValid(bandId)) throw `band id is not a valid ObjectId`;
+    artistId = validate.checkInput(artistId, "artist id", "string");
+    if (!ObjectId.isValid(artistId)) throw `artist id is not a valid ObjectId`;
     
-    const bandCollection = await bands();
-    const getBand = await bandCollection.findOne(
-        {_id: ObjectId(bandId)}
+    const artistCollection = await artists();
+    const getBand = await artistCollection.findOne(
+        {_id: ObjectId(artistId)}
     );
 
-    if (!getBand) throw `Band does not exist.`;
+    if (!getBand) throw `Artist does not exist.`;
 
     return getBand.albums;
 }
@@ -24,8 +24,9 @@ async function getAllAlbums() {
     const artistList = await artistCollection.find({}, {projection: {_id:1}}).toArray();
 
     let allAlbums = [];
-    artistList.forEach(element => {
-        allAlbums +=  await getAllAlbumsFromArtist(element._id);
+    artistList.forEach(async element => {
+        const temp = await getAllAlbumsFromArtist(element._id.toString());
+        allAlbums += temp;
     })
 
     return allAlbums;
@@ -37,7 +38,7 @@ async function getAllSongs() {
     let albums = await getAllAlbums();
     let allSongs = [];
     albums.forEach(element => {
-        allSongs += element.songs;
+        allSongs.push(element.songs);
     })
 
     return allSongs;
@@ -50,16 +51,16 @@ async function getTopAlbums(){
     let top3 = [];
     let highest = [0,0,0];
     albums.forEach(element => {
-        if (element.likes > highest[0]){
-            highest[0] = element.likes;
+        if (element.avgRating > highest[0]){
+            highest[0] = element.avgRating;
             top3[0] = element;
         }
-        else if (element.likes > highest[1]) {
-            highest[1] = element.likes;
+        else if (element.avgRating > highest[1]) {
+            highest[1] = element.avgRating;
             top3[1] = element;
         }
-        else if (element.likes > highest[2]) {
-            highest[2] = element.likes;
+        else if (element.avgRating > highest[2]) {
+            highest[2] = element.avgRating;
             top3[2] = element;
         }
     })
@@ -76,16 +77,16 @@ async function getTopSongs(){
     let highest = [0,0,0];
 
     songs.forEach(element => {
-        if (element.likes > highest[0]){
-            highest[0] = element.likes;
+        if (element.avgRating > highest[0]){
+            highest[0] = element.avgRating;
             top3[0] = element;
         }
-        else if (element.likes > highest[1]) {
-            highest[1] = element.likes;
+        else if (element.avgRating > highest[1]) {
+            highest[1] = element.avgRating;
             top3[1] = element;
         }
-        else if (element.likes > highest[2]) {
-            highest[2] = element.likes;
+        else if (element.avgRating > highest[2]) {
+            highest[2] = element.avgRating;
             top3[2] = element;
         }
     })
@@ -94,12 +95,12 @@ async function getTopSongs(){
 
 async function createAlbum(artistId, title, songs) {
     if (arguments.length > 3) throw `Too many arguments passed.`
-    artistId = checkInput(artistId, "artist id", "string");
+    artistId = validate.checkInput(artistId, "artist id", "string");
     if (!ObjectId.isValid(artistId)) throw `artist id is not a valid ObjectId`;
-    title = checkInput(title, 'title', 'string');
-    songs = checkInput(songs, 'songs','array');
+    title = validate.checkInput(title, 'title', 'string');
+    songs = validate.checkInput(songs, 'songs','array');
 
-    let songList;
+    let songList = [];
     songs.forEach(element => {
         let val = {
             _id: ObjectId(),
@@ -108,13 +109,13 @@ async function createAlbum(artistId, title, songs) {
             discussions : [],
             avgRating : 0
         }
-        songList += val;
+        songList.push(val);
     })
 
     const artistCollection = await artists();
-    const getArtist = await artistCollection.findOne({_id: artistId});
+    const getArtist = await artistCollection.findOne({_id: ObjectId(artistId)});
 
-    if (!getArtist) throw `Band does not exist.`;
+    if (!getArtist) throw `artist does not exist.`;
 
     let newAlbum = {
       _id: ObjectId(),
@@ -126,7 +127,7 @@ async function createAlbum(artistId, title, songs) {
     };
 
     const insertInfo = await artistCollection.updateOne(
-        {_id: artistId},
+        {_id: ObjectId(artistId)},
         {$addToSet: {albums: newAlbum}}
     );
     if (insertInfo.modifiedCount === 0) throw 'Could not add album';

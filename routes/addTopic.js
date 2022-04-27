@@ -47,6 +47,7 @@ router
     }
     })
 
+router
   .route("/artist")
   .post(async (req, res) => {
     let formData = req.body;
@@ -86,6 +87,7 @@ router
       }
   })
 
+router
   .route("/album")
   .post(async (req, res) => {
     let formData = req.body;

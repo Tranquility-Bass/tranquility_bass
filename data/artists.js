@@ -6,22 +6,22 @@ const validate = require("./validation");
 async function getTopArtists(){
     if (arguments.length > 0) throw `Too many arguments passed.`
     const artistCollection = await artists();
-    const artistList = await artistCollection.find({}, {projection: {_id:1, name: 1, likes: 1}}).toArray();
+    const artistList = await artistCollection.find({}, {projection: {_id:1, name: 1, avgRating: 1}}).toArray();
     //sort artistList based on likes
     let top3 = [];
     let highest = [0,0,0];
     //return top 3
     artistList.forEach(element => {
-        if (element.likes > highest[0]){
-            highest[0] = element.likes;
+        if (element.avgRating > highest[0]){
+            highest[0] = element.avgRating;
             top3[0] = element;
         }
-        else if (element.likes > highest[1]) {
-            highest[1] = element.likes;
+        else if (element.avgRating > highest[1]) {
+            highest[1] = element.avgRating;
             top3[1] = element;
         }
-        else if (element.likes > highest[2]) {
-            highest[2] = element.likes;
+        else if (element.avgRating > highest[2]) {
+            highest[2] = element.avgRating;
             top3[2] = element;
         }
     })
@@ -65,7 +65,7 @@ async function get(id) {
     if (!ObjectId.isValid(id)) throw `Artistid is not a valid ObjectId`;
     
     const artistCollection = await artists();
-    const artist = await bandCollection.findOne({ _id: ObjectId(id) });
+    const artist = await artistCollection.findOne({ _id: ObjectId(id) });
     if (!artist) throw 'No band with that id';
 
     artist._id = artist._id.toString();
