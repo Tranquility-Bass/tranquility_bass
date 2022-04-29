@@ -147,7 +147,84 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 	return newReview;
 }
 
+const isReviewLiked = async function isReviewLiked(reviewId, userId){
+	if (arguments.length != 2) throw 'Must input two values';
+	if (typeof reviewId != 'string' || typeof userId != 'string') throw 'Review ID and user ID must be strings';
+	reviewId = reviewId.trim();
+	userId = userId.trim();
+	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
+	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
+	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
+	const reviewsCollection = await reviews();
+	let review = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
+	if (review == null) throw 'No review found with that ID';
+	if (review["likes"].includes(ObjectId(userId))) return true;
+	return false;
+}
+
+const isReviewDisliked = async function isReviewiked(reviewId, userId){
+	if (arguments.length != 2) throw 'Must input two values';
+	if (typeof reviewId != 'string' || typeof userId != 'string') throw 'Review ID and user ID must be strings';
+	reviewId = reviewId.trim();
+	userId = userId.trim();
+	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
+	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
+	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
+	const reviewsCollection = await reviews();
+	let review = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
+	if (review == null) throw 'No review found with that ID';
+	if (review["dislikes"].includes(ObjectId(userId))) return true;
+	return false;
+}
+
+const likeReview = async function likeReview(reviewId, userId){
+	if (arguments.length != 2) throw 'Must input two values';
+	if (typeof reviewId != 'string' || typeof userId != 'string') throw 'Review ID and user ID must be strings';
+	reviewId = reviewId.trim();
+	userId = userId.trim();
+	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
+	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
+	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
+	if (isReviewLiked(reviewId, userId)) throw 'Review is already liked by this user';
+	const reviewsCollection = await reviews();
+	let updateInformation;
+	if (isReviewDisliked(reviewId, userId)){
+		updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $pull: {"dislikes": ObjectId(userId)} });
+		if (updateInformation["nModified"] != 1) throw 'Update failed';
+	}
+	updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $push: {"likes": ObjectId(userId)} });
+	if (updateInformation["nModified"] != 1) throw 'Update failed';
+	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
+	if (updatedReview == null) throw 'No review found with that ID';
+	updatedReview["_id"] = updateReview["_id"].toString();
+	return updatedReview;
+}
+
+const dislikeReview = async function dislikeReview(reviewId, userId){
+	if (arguments.length != 2) throw 'Must input two values';
+	if (typeof reviewId != 'string' || typeof userId != 'string') throw 'Review ID and user ID must be strings';
+	reviewId = reviewId.trim();
+	userId = userId.trim();
+	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
+	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
+	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
+	if (isReviewDisiked(reviewId, userId)) throw 'Review is already disliked by this user';
+	const reviewsCollection = await reviews();
+	let updateInformation;
+	if (isReviewLiked(reviewId, userId)){
+		updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $pull: {"likes": ObjectId(userId)} });
+		if (updateInformation["nModified"] != 1) throw 'Update failed';
+	}
+	updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $push: {"dislikes": ObjectId(userId)} });
+	if (updateInformation["nModified"] != 1) throw 'Update failed';
+	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
+	if (updatedReview == null) throw 'No review found with that ID';
+	updatedReview["_id"] = updateReview["_id"].toString();
+	return updatedReview;
+}
+
 const getSearchResult = async function getSearchResult(searchTerm){
+	if (arguments.length != 1) throw 'Must input one value';
 	if (typeof searchTerm != 'string') throw 'Search term must be a string';
 	searchTerm = searchTerm.trim();
 	if (searchTerm === "")throw 'Search term must be a non empty string';
@@ -180,6 +257,7 @@ const getSearchResult = async function getSearchResult(searchTerm){
 }
 
 const getById = async function getById(searchId){
+	if (arguments.length != 1) throw 'Must input one value';
 	if (typeof searchId != 'string') throw 'Search ID must be a string';
 	searchId = searchId.trim();
 	if (searchId === "")throw 'Search ID must be a non empty string';
@@ -209,6 +287,7 @@ const getById = async function getById(searchId){
 }
 
 const getDiscussions = async function getDiscussions(searchId){
+	if (arguments.length != 1) throw 'Must input one value';
 	if (typeof searchId != 'string') throw 'Search ID must be a string';
 	searchId = searchId.trim();
 	if (searchId === "")throw 'Search ID must be a non empty string';
@@ -226,6 +305,7 @@ const getDiscussions = async function getDiscussions(searchId){
 }
 
 const getReviews = async function getReviews(searchId){
+	if (arguments.length != 1) throw 'Must input one value';
 	if (typeof searchId != 'string') throw 'Search ID must be a string';
 	searchId = searchId.trim();
 	if (searchId === "")throw 'Search ID must be a non empty string';
@@ -264,6 +344,10 @@ const getReviews = async function getReviews(searchId){
 module.exports = {
 	createDiscussion,
 	createReview,
+	isReviewLiked,
+	isReviewDisliked,
+	likeReview,
+	dislikeReview,
 	getSearchResult,
 	getById,
 	getDiscussions,
