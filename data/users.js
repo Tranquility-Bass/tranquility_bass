@@ -14,7 +14,7 @@ function checkInput(val, type) {
         if (val.length < 4) throw `Username is too short`;
         let validchars = "qwertyuiopasdfghjklzxcvbnm1234567890";
         for (let i=0; i<val.length; i++){
-            if (!validchars.includes(val[i])) throw `Invalid character ${val[i]} supplied in username.`;
+            if (!validchars.includes(val[i].toLowerCase())) throw `Invalid character ${val[i]} supplied in username.`;
         }
         val = val.toLowerCase();
     }
@@ -29,7 +29,7 @@ function checkInput(val, type) {
   }
 
 async function createUser(username, password, email) {
-    if (arguments.length > 2) throw `Too many arguments passed.`
+    if (arguments.length > 3) throw `Too many arguments passed.`
     username = checkInput(username,'username');
     password = checkInput(password,'password');
     email = checkInput(email, "email");
