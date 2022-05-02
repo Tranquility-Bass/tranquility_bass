@@ -2,6 +2,30 @@ const { ObjectId } = require("mongodb");
 const mongoCollections = require("../config/mongoCollections")
 const artists = mongoCollections.artists;
 const validate = require("./validation");
+const searchFunctions = require("./search");
+
+async function updateArtistRating(id){
+    id = checkInput(id, "id", "string");
+    if (!ObjectId.isValid(id)) throw `id is not a valid ObjectId`;
+
+    const reviews = await searchFunctions.getReviews(id);
+    let likes = 0;
+    let dislikes = 0;
+    reviews.forEach(element => {
+        likes += element["likes"].length();
+        dislikes += element["dislikes"].length();
+    })
+    let avgRating = Math.round(likes / dislikes);
+
+    const artistCollection = await artists();
+    const updatedRating = await artistCollection.updateOne(
+        {_id: ObjectId(id)},
+        {$set : {avgRating : avgRating}}
+    )
+    if (!updatedRating) throw `Error updating rating`;
+    return {ratingUpdated : true};
+    
+}
 
 async function getTopArtists(){
     if (arguments.length > 0) throw `Too many arguments passed.`
@@ -28,7 +52,7 @@ async function getTopArtists(){
     return top3;
 }
 
-async function create(name){
+async function createArtist(name){
     if (arguments.length > 1) throw `Too many arguments passed.`
     name = validate.checkInput(name, "name", "string");
 
@@ -54,9 +78,8 @@ async function create(name){
 async function getAllArtists() {
     if (arguments.length > 0) throw `Too many arguments passed.`
     const artistCollection = await artists();
-    const artistList = await artistCollection.find({}, {projection: {_id:1, name: 1}}).toArray().sort();
-
-    return artistList;
+    const artistList = await artistCollection.find({}, {projection: {_id:1, name: 1}}).toArray();
+    return artistList.sort(validate.sortBy("name"));
 }
 
 async function get(id) {
@@ -72,4 +95,4 @@ async function get(id) {
     return artist;
 }
 
-module.exports = {getTopArtists, create, getAllArtists};
+module.exports = {getTopArtists, createArtist, getAllArtists, updateArtistRating};

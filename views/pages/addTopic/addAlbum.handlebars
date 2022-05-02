@@ -4,10 +4,11 @@
   {{/if}}
   <form id="addAlbum-form" action="/private/addTopic/album" method="POST">
     <label for="artist">Artist Name: </label>
-    <select id="artist" name="artist"></select>
-    {{#each artist}}
-    <option value={{artist._id}}>{{artist.name}}</option>
+    <select id="artist" name="artist">
+    {{#each artists}}
+    <option value={{_id}}>{{name}}</option>
     {{/each}}
+    </select>
 
     <label for="albumName">Album Name: </label>
     <input type="text" id="albumName" name="albumName">
