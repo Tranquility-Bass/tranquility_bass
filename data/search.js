@@ -362,7 +362,7 @@ async function updateRating(artistId, albumId, songId){
 		}
 	}
 
-    const reviews;
+    let reviews;
 	if (mode == "artist") reviews = await getReviews(artistId);
 	if (mode == "album") reviews = await getReviews(albumId);
 	if (mode == "song") reviews = await getReviews(songId);
