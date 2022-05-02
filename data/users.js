@@ -29,7 +29,7 @@ function checkInput(val, type) {
   }
 
 async function createUser(username, password, email) {
-    if (arguments.length > 2) throw `Too many arguments passed.`
+    if (arguments.length > 3) throw `Too many arguments passed.`
     username = checkInput(username,'username');
     password = checkInput(password,'password');
     email = checkInput(email, "email");
@@ -52,7 +52,10 @@ async function createUser(username, password, email) {
     const insertInfo = await userCollection.insertOne(newUser);
     if (insertInfo.insertedCount === 0) throw 'Could not add user';
     
-    return {userInserted: true};
+	const addedUser = await userCollection.findOne({ username: username });
+    addedUser["_id"] = addedUser["_id"].toString();
+	return addedUser;
+	//return {userInserted: true};
 }
 
 async function checkUser(username, password) {

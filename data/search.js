@@ -3,9 +3,10 @@ const artists = mongoCollections.artists;
 const reviews = mongoCollections.reviews;
 const forums = mongoCollections.forums;
 const users = mongoCollections.users;
+const albums = require("./albums");
 const { ObjectId } = require('mongodb');
 
-const createDiscussion = async function createDiscussion(artistId, albumId, songId, title, body, datePosted, userId){
+const createDiscussion = async function createDiscussion(artistId, albumId, song, title, body, datePosted, userId){
 	if (arguments.length != 7) throw 'Must input seven values';
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
@@ -22,12 +23,10 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 		if (albumId === "") throw 'Album ID must be a non empty string';
 		if (!ObjectId.isValid(albumId)) throw 'invalid album ID';
 		albumId = ObjectId(albumId);
-		if (songId != null){
-			if (typeof songId != 'string') throw 'Song ID must be null or a string';
-			songId = songId.trim();
-			if (songId === "") throw 'Song ID must be a non empty string';
-			if (!ObjectId.isValid(songId)) throw 'invalid song ID';
-			songId = ObjectId(songId);
+		if (song != null){
+			if (typeof song != 'string') throw 'Song ID must be null or a string';
+			song = song.trim();
+			if (song === "") throw 'Song ID must be a non empty string';
 		}
 	}
 	for (let i = 0; i < datePosted.length; i++) {
@@ -50,24 +49,24 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 		_id: ObjectId(),
 		artist_id: ObjectId(artistId),
 		album_id: albumId,
-		song_id: songId,
+		song: song,
 		title: title,
 		body: body,
 		date_posted: datePosted,
 		user_id: ObjectId(userId),
 		comments: []
 	};
-	const insertInfo = await forumsCollection.insert(newDiscussion);
+	const insertInfo = await forumsCollection.insertOne(newDiscussion);
 	if (!insertInfo.acknowledged || !insertInfo.insertedId) throw 'Could not add discussion';
 	const artistsCollection = await artists();
-	if (album_id != null){
-		if (song_id != null){
-			await artistsCollection.updateOne({ "albums.songs._id": songId }, { "$push": {"albums.songs.discussions": newDiscussion["_id"]} });
+	if (albumId != null){
+		if (song != null){
+			await artistsCollection.updateOne({ "albums.songs.title": song }, { $push: {"albums.$.songs.$.discussions": newDiscussion["_id"]} });
 		} else {
-			await artistsCollection.updateOne({ "albums._id": albumId }, { "$push": {"albums.discussions": newDiscussion["_id"]} });
+			await artistsCollection.updateOne({ "albums._id": albumId }, { $push: {"albums.$.discussions": newDiscussion["_id"]} });
 		}
 	} else {
-		await artistsCollection.updateOne({ "_id": artistId }, { "$push": {"discussions": newDiscussion["_id"]} });
+		await artistsCollection.updateOne({ "_id": ObjectId(artistId) }, { $push: {"discussions": newDiscussion["_id"]} });
 	}
 	const usersCollection = await users();
 	await usersCollection.updateOne({ "_id" : ObjectId(userId)}, {$push: { "discForumPosts": newDiscussion["_id"] }});
@@ -75,7 +74,7 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 	return newDiscussion;
 }
 
-const createReview = async function createReview(artistId, albumId, songId, title, body, datePosted, userId){
+const createReview = async function createReview(artistId, albumId, song, title, body, datePosted, userId){
 	if (arguments.length != 7) throw 'Must input seven values';
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
@@ -92,12 +91,10 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 		if (albumId === "") throw 'Album ID must be a non empty string';
 		if (!ObjectId.isValid(albumId)) throw 'invalid album ID';
 		albumId = ObjectId(albumId);
-		if (songId != null){
-			if (typeof songId != 'string') throw 'Song ID must be null or a string';
-			songId = songId.trim();
-			if (songId === "") throw 'Song ID must be a non empty string';
-			if (!ObjectId.isValid(songId)) throw 'invalid song ID';
-			songId = ObjectId(songId);
+		if (song != null){
+			if (typeof song != 'string') throw 'Song ID must be null or a string';
+			song = song.trim();
+			if (song === "") throw 'Song ID must be a non empty string';
 		}
 	}
 	for (let i = 0; i < datePosted.length; i++) {
@@ -120,7 +117,7 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 		_id: ObjectId(),
 		artist_id: ObjectId(artistId),
 		album_id: albumId,
-		song_id: songId,
+		song: song,
 		title: title,
 		body: body,
 		date_posted: datePosted,
@@ -129,17 +126,17 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 		dislikes: [],
 		hidden: false
 	};
-	const insertInfo = await reviewsCollection.insert(newReview);
+	const insertInfo = await reviewsCollection.insertOne(newReview);
 	if (!insertInfo.acknowledged || !insertInfo.insertedId) throw 'Could not add review';
 	const artistsCollection = await artists();
-	if (album_id != null){
-		if (song_id != null){
-			await artistsCollection.updateOne({ "albums.songs._id": songId }, { "$push": {"albums.songs.reviews": newReview["_id"]} });
+	if (albumId != null){
+		if (song != null){
+			await artistsCollection.updateOne({ "albums.songs.title": song }, { "$push": {"albums.songs.reviews": newReview["_id"]} });
 		} else {
-			await artistsCollection.updateOne({ "albums._id": albumId }, { "$push": {"albums.reviews": newReview["_id"]} });
+			await artistsCollection.updateOne({ "albums._id": albumId }, { "$push": {"albums.$.reviews": newReview["_id"]} });
 		}
 	} else {
-		await artistsCollection.updateOne({ "_id": artistId }, { "$push": {"reviews": newReview["_id"]} });
+		await artistsCollection.updateOne({ "_id": ObjectId(artistId) }, { "$push": {"reviews": newReview["_id"]} });
 	}
 	const usersCollection = await users();
 	await usersCollection.updateOne({ "_id" : ObjectId(userId)}, {$push: { "reviewPosts": newReview["_id"] }});
@@ -231,11 +228,26 @@ const getSearchResult = async function getSearchResult(searchTerm){
 	const artistsCollection = await artists();
 	let results = [[],[],[]];
 	let artistResults = await artistsCollection.find({ name: {$regex: searchTerm, $options: "i"} }).toArray();
-	let albumsResults = await artistsCollection.find({ albums: {title: {$regex: searchTerm, $options: "i"}} }).toArray();
-	let songsResults = await artistsCollection.find({ albums: {songs: {title: {$regex: searchTerm, $options: "i"}}} }).toArray();
+	const allAlbums = await albums.getAllAlbums();
+	let albumsResults = [];
+	allAlbums.forEach(element => {
+		if (element.title.toLowerCase().includes(searchTerm.toLowerCase())){
+			albumsResults.push(element);
+		}
+	});
+	const allSongs = await albums.getAllSongs();
+	let songsResults = [];
+	allSongs.forEach(element => {
+		if (element.title.toLowerCase().includes(searchTerm.toLowerCase())){
+			songsResults.push(element);
+		}
+	});
 	if (artistResults == null) results[0] = [];
 	else results[0] = artistResults;
-	let result = [];
+	console.log(albumsResults);
+	results[1] = albumsResults;
+	results[2] = songsResults;
+	/*let result = [];
 	for (let x of albumsResults){
 		for (let y of x["albums"]){
 			if (y["title"].toLowerCase().includes(searchTerm.toLowerCase())){
@@ -254,7 +266,7 @@ const getSearchResult = async function getSearchResult(searchTerm){
 			}
 		}
 	}
-	results[2] = result.slice(0);
+	results[2] = result.slice(0);*/
 	console.log(results);
 	return results;
 }
