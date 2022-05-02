@@ -1,0 +1,42 @@
+<h1> {{title}} </h1>
+<section>
+    <h3>Artists Results</h3>
+
+    {{#if emptyArtist}}
+        <p>No Artists Found that match the Search Term</p>
+    {{/if}}
+
+    {{#each resultArtists}}
+        <h6>
+            <a href="/{{_id}}">{{name}}</a>
+        </h6>
+    {{/each}}
+</section>
+
+<section>
+    <h3>Albums Results</h3>
+
+    {{#if emptyAlbum}}
+        <p>No Albums Found that match the Search Term</p>
+    {{/if}}
+
+    {{#each resultAlbums}}
+        <h6>
+            <a href="/{{_id}}">{{title}}</a>
+        </h6>
+    {{/each}}
+</section>
+
+<section>
+    <h3>Songs Results</h3>
+
+    {{#if emptySong}}
+        <p>No Songs Found that match the Search Term</p>
+    {{/if}}
+
+    {{#each resultSongs}}
+        <h6>
+            <a href="/{{_id}}">{{title}}</a>
+        </h6>
+    {{/each}}
+</section>
