@@ -10,7 +10,14 @@ const albumData = data.albums;
 router
   .route('/')
   .get(async (req, res) => {
-    //TODO make sure they are logged in
+    if (!req.session.loggedIn) {
+        return res.status(403).render('pages/login', {
+            title: "Login",
+            name: "Login",
+            error: "You must be logged in to view this page."
+        });
+    }
+    
     let val = {
         title: "Add a Topic",
     }

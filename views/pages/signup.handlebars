@@ -1,0 +1,38 @@
+<section>
+    <h1>{{title}}</h1>
+    <form method="POST" action="/signup" id="signup-form">
+        <label for="username">Username: </label> 
+        <input type="text" id="username" name="username">
+
+        <br>
+        <br>
+
+        <label for="password">Password: </label> 
+        <input type="password" id="password" name="password">
+
+        <br>
+        <br>
+
+        <label for="email">Email: </label>
+        <input type="text" id="email" name="email">
+
+        <br>
+        <br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <br>
+
+    <div>
+        <a href="/login">Already have an account? Click here to login!</a>
+    </div>
+
+    <br>
+    <br>
+
+    {{#if error}}
+        <div>{{error}}</div>
+    {{/if}}
+    
+</section>
