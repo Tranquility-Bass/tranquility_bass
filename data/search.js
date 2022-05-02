@@ -5,6 +5,7 @@ const forums = mongoCollections.forums;
 const users = mongoCollections.users;
 const albums = require("./albums");
 const { ObjectId } = require('mongodb');
+const validate = require('./validation');
 
 const createDiscussion = async function createDiscussion(artistId, albumId, song, title, body, datePosted, userId){
 	if (arguments.length != 7) throw 'Must input seven values';
@@ -194,6 +195,7 @@ const likeReview = async function likeReview(reviewId, userId){
 	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (updatedReview == null) throw 'No review found with that ID';
 	updatedReview["_id"] = updateReview["_id"].toString();
+	updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
 	return updatedReview;
 }
 
@@ -217,6 +219,7 @@ const dislikeReview = async function dislikeReview(reviewId, userId){
 	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (updatedReview == null) throw 'No review found with that ID';
 	updatedReview["_id"] = updateReview["_id"].toString();
+	updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
 	return updatedReview;
 }
 
@@ -355,6 +358,65 @@ const getReviews = async function getReviews(searchId){
 	band["_id"] = band["_id"].toString();
 	return band;
 }*/
+
+async function updateRating(artistId, albumId, songId){
+	let mode = "artist";
+    artistId = validate.checkInput(artistId, "artistId", "string");
+    if (!ObjectId.isValid(artistId)) throw `artistId is not a valid ObjectId`;
+	if (albumId) {
+		mode = "album";
+		albumId = validate.checkInput(albumId, "artistId", "string");
+    	if (!ObjectId.isValid(albumId)) throw `artistId is not a valid ObjectId`; 
+		if (songId) {
+			mode = "song"
+			songId = validate.checkInput(songId, "artistId", "string");
+    		if (!ObjectId.isValid(songId)) throw `artistId is not a valid ObjectId`;
+		}
+	}
+
+    let reviews;
+	if (mode == "artist") reviews = await getReviews(artistId);
+	if (mode == "album") reviews = await getReviews(albumId);
+	if (mode == "song") reviews = await getReviews(songId);
+
+    let likes = 0;
+    let dislikes = 0;
+    reviews.forEach(element => {
+        likes += element["likes"].length();
+        dislikes += element["dislikes"].length();
+    })
+    let avgRating = Math.round(likes / dislikes);
+	if (mode == "artist") {
+		const artistCollection = await artists();
+		const updatedRating = await artistCollection.updateOne(
+			{_id: ObjectId(artistId)},
+			{$set : {avgRating : avgRating}}
+		)
+		if (!updatedRating) throw `Error updating rating`;
+		return {ratingUpdated : true};
+	}
+	else if (mode == "album") {
+		const artistCollection = await artists();
+		const updatedRating = await artistCollection.updateOne(
+			{ "albums._id": ObjectId(albumId) },
+			{$set : {avgRating : avgRating}}
+		)
+		if (!updatedRating) throw `Error updating rating`;
+		return {ratingUpdated : true};
+	}
+	else if (mode == "song") {
+		const artistCollection = await artists();
+		const updatedRating = await artistCollection.updateOne(
+			{ "albums.songs._id": ObjectId(songId) },
+			{$set : {avgRating : avgRating}}
+		)
+		if (!updatedRating) throw `Error updating rating`;
+		return {ratingUpdated : true};
+	}
+    else {
+		throw `Invalid updateRating mode entered.`;
+	}
+}
 
 module.exports = {
 	createDiscussion,

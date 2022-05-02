@@ -14,7 +14,7 @@ function checkInput(val, type) {
         if (val.length < 4) throw `Username is too short`;
         let validchars = "qwertyuiopasdfghjklzxcvbnm1234567890";
         for (let i=0; i<val.length; i++){
-            if (!validchars.includes(val[i])) throw `Invalid character ${val[i]} supplied in username.`;
+            if (!validchars.includes(val[i].toLowerCase())) throw `Invalid character ${val[i]} supplied in username.`;
         }
         val = val.toLowerCase();
     }

@@ -28,7 +28,7 @@ async function getTopArtists(){
     return top3;
 }
 
-async function create(name){
+async function createArtist(name){
     if (arguments.length > 1) throw `Too many arguments passed.`
     name = validate.checkInput(name, "name", "string");
 
@@ -54,9 +54,8 @@ async function create(name){
 async function getAllArtists() {
     if (arguments.length > 0) throw `Too many arguments passed.`
     const artistCollection = await artists();
-    const artistList = await artistCollection.find({}, {projection: {_id:1, name: 1}}).toArray().sort();
-
-    return artistList;
+    const artistList = await artistCollection.find({}, {projection: {_id:1, name: 1}}).toArray();
+    return artistList.sort(validate.sortBy("name"));
 }
 
 async function get(id) {
@@ -72,4 +71,4 @@ async function get(id) {
     return artist;
 }
 
-module.exports = {getTopArtists, create, getAllArtists};
+module.exports = {getTopArtists, createArtist, getAllArtists};

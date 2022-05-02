@@ -1,9 +1,6 @@
 function checkInput(val, varName, varType) {
     if (val == undefined) throw `${varName} is not defined`;
     if (varType == "array") {
-        if (varName == "albumSongs") {
-            val = val.split(" ");
-        }
         if (!Array.isArray(val)) throw `${varName} is not an array`;
         let i = 0;
         let arr = [];
@@ -15,7 +12,6 @@ function checkInput(val, varName, varType) {
                 arr.push(t);
             }
         });
-        if (arr.length < 3) throw `${varName} is not a valid array.`;
         val = arr;
     }
     else if (varType == "string") {
@@ -37,6 +33,47 @@ function checkInput(val, varName, varType) {
     return val;
 }
 
+/**
+ * @description
+ * Returns a function which will sort an
+ * array of objects by the given key.
+ *
+ * @param  {String}  key
+ * @param  {Boolean} reverse
+ * @return {Function}
+ */
+
+//https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value?page=2&tab=trending#tab-top
+ const sortBy = (key, reverse) => {
+
+    // Move smaller items towards the front
+    // or back of the array depending on if
+    // we want to sort the array in reverse
+    // order or not.
+    const moveSmaller = reverse ? 1 : -1;
+  
+    // Move larger items towards the front
+    // or back of the array depending on if
+    // we want to sort the array in reverse
+    // order or not.
+    const moveLarger = reverse ? -1 : 1;
+  
+    /**
+     * @param  {*} a
+     * @param  {*} b
+     * @return {Number}
+     */
+    return (a, b) => {
+      if (a[key] < b[key]) {
+        return moveSmaller;
+      }
+      if (a[key] > b[key]) {
+        return moveLarger;
+      }
+      return 0;
+    };
+  };
+
 function checkHateSpeech(input) {
     const badWords = ["bitch", "fuck", "stupid"];
     badWords.forEach(element => {
@@ -47,4 +84,4 @@ function checkHateSpeech(input) {
     return false;
 }
 
-module.exports = {checkInput, checkHateSpeech};
+module.exports = {checkInput, checkHateSpeech, sortBy};
