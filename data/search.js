@@ -229,30 +229,33 @@ const getSearchResult = async function getSearchResult(searchTerm){
 	searchTerm = searchTerm.trim();
 	if (searchTerm === "")throw 'Search term must be a non empty string';
 	const artistsCollection = await artists();
-	let results = [null, null, null];
-	results[0] = await artistsCollection.find({ "name": {$regex: searchTerm, $options: "i"} });
-	results[1] = await artistsCollection.find({ "albums": {"albumTitle": {$regex: searchTerm, $options: "i"}} });
-	results[2] = await artistsCollection.find({ "albums": {"songs": {$regex: searchTerm, $options: "i"}} });
+	let results = [[],[],[]];
+	let artistResults = await artistsCollection.find({ name: {$regex: searchTerm, $options: "i"} }).toArray();
+	let albumsResults = await artistsCollection.find({ albums: {title: {$regex: searchTerm, $options: "i"}} }).toArray();
+	let songsResults = await artistsCollection.find({ albums: {songs: {title: {$regex: searchTerm, $options: "i"}}} }).toArray();
+	if (artistResults == null) results[0] = [];
+	else results[0] = artistResults;
 	let result = [];
-	for (let x of results[1]){
+	for (let x of albumsResults){
 		for (let y of x["albums"]){
-			if (y["albumTitle"].toLowerCase().includes(searchTerm.toLowerCase())){
+			if (y["title"].toLowerCase().includes(searchTerm.toLowerCase())){
 				result.push(y);
 			}
 		}
 	}
 	results[1] = result.slice(0);
 	result = [];
-	for (let x of results[2]){
+	for (let x of songsResults){
 		for (let y of x["albums"]){
 			for (let z of y["songs"]){
-				if (z["songTitle"].toLowerCase().includes(searchTerm.toLowerCase())){
+				if (z["title"].toLowerCase().includes(searchTerm.toLowerCase())){
 					result.push(z);
 				}
 			}
 		}
 	}
 	results[2] = result.slice(0);
+	console.log(results);
 	return results;
 }
 
