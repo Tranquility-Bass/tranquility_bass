@@ -136,4 +136,4 @@ async function createAlbum(artistId, title, songs) {
     return newAlbum;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum};
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs};
