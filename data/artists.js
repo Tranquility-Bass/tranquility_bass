@@ -28,7 +28,7 @@ async function getTopArtists(){
     return top3;
 }
 
-async function createArtist(name){
+async function create(name){
     if (arguments.length > 1) throw `Too many arguments passed.`
     name = validate.checkInput(name, "name", "string");
 
@@ -71,4 +71,4 @@ async function get(id) {
     return artist;
 }
 
-module.exports = {getTopArtists, createArtist, getAllArtists};
+module.exports = {getTopArtists, create, getAllArtists};
