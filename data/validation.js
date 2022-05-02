@@ -1,3 +1,43 @@
+const mongoCollections = require("../config/mongoCollections")
+const artists = mongoCollections.artists;
+const artistFunctions = require("./artists");
+const albumFunctions = require("./albums");
+const searchFunctions = require("./search");
+
+async function updateRating(id, type){
+    id = checkInput(id, "id", "string");
+    if (!ObjectId.isValid(id)) throw `id is not a valid ObjectId`;
+
+    const reviews = await searchFunctions.getReviews(id);
+    let likes = 0;
+    let dislikes = 0;
+    reviews.forEach(element => {
+        likes += element["likes"].length();
+        dislikes += element["dislikes"].length();
+    })
+    let avgRating = Math.round(likes / dislikes);
+
+    if (type == "artist"){
+        const artistCollection = await artists();
+        const updatedRating = await artistCollection.updateOne(
+            {_id: ObjectId(id)},
+            {$set : {avgRating : avgRating}}
+        )
+        if (!updatedRating) throw `Error updating rating`;
+        return {ratingUpdated : true};
+    }
+    else if (type == "album") {
+
+    }
+    else if (type == "song") {
+
+    }
+    else {
+        throw `Invalid type supplied to updateRating`;
+    }
+}
+
+
 function checkInput(val, varName, varType) {
     if (val == undefined) throw `${varName} is not defined`;
     if (varType == "array") {
