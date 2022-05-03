@@ -225,7 +225,13 @@ const likeReview = async function likeReview(reviewId, userId){
 	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (updatedReview == null) throw 'No review found with that ID';
 	updatedReview["_id"] = updatedReview["_id"].toString();
-	//updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
+
+	let artI, alI, songI;
+	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
+	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
+	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
+	updateRating(artI, alI, songI);
+
 	return updatedReview;
 }
 
@@ -249,7 +255,13 @@ const dislikeReview = async function dislikeReview(reviewId, userId){
 	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (updatedReview == null) throw 'No review found with that ID';
 	updatedReview["_id"] = updatedReview["_id"].toString();
-	//updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
+	
+	let artI, alI, songI;
+	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
+	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
+	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
+	updateRating(artI, alI, songI);
+
 	return updatedReview;
 }
 
@@ -361,9 +373,9 @@ const getReviews = async function getReviews(searchId){
 	let result = await getById(searchId);
 	let reviewsCollection = await reviews();
 	let allReviews = [];
-	let temp;
+	//let temp;
 	for (let x of result["reviews"]){
-		temp = await reviewsCollection.findOne({ "_id": ObjectId(x) });
+		const temp = await reviewsCollection.findOne({ "_id": ObjectId(x) });
 		if (temp == null) throw "No reviews found with that ID";
 		allReviews.push(temp);
 	}
@@ -395,12 +407,12 @@ async function updateRating(artistId, albumId, songId){
     if (!ObjectId.isValid(artistId)) throw `artistId is not a valid ObjectId`;
 	if (albumId) {
 		mode = "album";
-		albumId = validate.checkInput(albumId, "artistId", "string");
-    	if (!ObjectId.isValid(albumId)) throw `artistId is not a valid ObjectId`; 
+		albumId = validate.checkInput(albumId, "albumId", "string");
+    	if (!ObjectId.isValid(albumId)) throw `albumId is not a valid ObjectId`; 
 		if (songId) {
 			mode = "song"
-			songId = validate.checkInput(songId, "artistId", "string");
-    		if (!ObjectId.isValid(songId)) throw `artistId is not a valid ObjectId`;
+			songId = validate.checkInput(songId, "songId", "string");
+    		if (!ObjectId.isValid(songId)) throw `songId is not a valid ObjectId`;
 		}
 	}
 
@@ -412,10 +424,11 @@ async function updateRating(artistId, albumId, songId){
     let likes = 0;
     let dislikes = 0;
     reviews.forEach(element => {
-        likes += element["likes"].length();
-        dislikes += element["dislikes"].length();
+        likes += element["likes"].length;
+        dislikes += element["dislikes"].length;
     })
-    let avgRating = Math.round(likes / dislikes);
+    let avgRating;
+	(dislikes == 0) ? avgRating = likes : avgRating = Math.round(likes / dislikes);
 	if (mode == "artist") {
 		const artistCollection = await artists();
 		const updatedRating = await artistCollection.updateOne(
@@ -437,7 +450,7 @@ async function updateRating(artistId, albumId, songId){
 	else if (mode == "song") {
 		const artistCollection = await artists();
 		const updatedRating = await artistCollection.updateOne(
-			{ "albums.songs._id": ObjectId(songId) },
+			{ "songs._id": ObjectId(songId) },
 			{$set : {avgRating : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;

@@ -14,9 +14,9 @@ router
       let topAlbums = await albumData.getTopAlbums();
       let topSongs = await albumData.getTopSongs();
 
-      let emptyArtist = !topArtists.length == 0;
-      let emptyAlbum = !topAlbums.length == 0;
-      let emptySong = !topSongs.length == 0;
+      let emptyArtist = (topArtists.length == 0);
+      let emptyAlbum = (topAlbums.length == 0);
+      let emptySong = (topSongs.length == 0);
 
       let val = {
           title: "Top Reviews",
