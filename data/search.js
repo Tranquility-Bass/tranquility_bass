@@ -75,6 +75,32 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 	return newDiscussion;
 }
 
+const createComment = async function createComment(discussionId, userId, body){
+	if (arguments.length != 3) throw 'Must input three values';
+	if (typeof discussionId != 'string' || typeof userId != 'string' || typeof body != 'string') throw 'Discussion ID, user ID, and body must be strings';
+	discussionId = discussionId.trim();
+	userId = userId.trim();
+	body = body.trim();
+	if (discussionId === "" || userId === "" || body === "") throw 'Discussion ID, user ID, and body must be non empty strings';
+	if (!ObjectId.isValid(discussionId)) throw 'invalid discussion ID';
+	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
+	const forumsCollection = await forums();
+	let newDiscussion = {
+		_id: ObjectId(),
+		user_id: ObjectId(userId),
+		comment: body
+	};
+	let updateInformation = await forumsCollection.updateOne({ "_id": ObjectId(discussionId) }, { $push: {"comments": newDiscussion} });
+	if (updateInformation["modifiedCount"] != 1) throw 'Update failed';
+	// Returning the updated discussion
+	/*let updatedDiscussion = await forumsCollection.findOne({ "_id": ObjectId(discussionId) });
+	updatedDiscussion["_id"] = updatedDiscussion["_id"].toString();
+	return updatedDiscussion;*/
+	// Returning new comment
+	newDiscussion["_id"] = newDiscussion["_id"].toString();
+	return newDiscussion;
+}
+
 const createReview = async function createReview(artistId, albumId, song, title, body, datePosted, userId){
 	if (arguments.length != 7) throw 'Must input seven values';
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
@@ -156,7 +182,9 @@ const isReviewLiked = async function isReviewLiked(reviewId, userId){
 	const reviewsCollection = await reviews();
 	let review = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (review == null) throw 'No review found with that ID';
-	if (review["likes"].includes(ObjectId(userId))) return true;
+	for (x of review["likes"]){
+		if (x.equals(ObjectId(userId))) return true;
+	}
 	return false;
 }
 
@@ -171,7 +199,9 @@ const isReviewDisliked = async function isReviewiked(reviewId, userId){
 	const reviewsCollection = await reviews();
 	let review = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (review == null) throw 'No review found with that ID';
-	if (review["dislikes"].includes(ObjectId(userId))) return true;
+	for (x of review["dislikes"]){
+		if (x.equals(ObjectId(userId))) return true;
+	}
 	return false;
 }
 
@@ -183,19 +213,19 @@ const likeReview = async function likeReview(reviewId, userId){
 	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
 	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
 	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
-	if (isReviewLiked(reviewId, userId)) throw 'Review is already liked by this user';
+	if (await isReviewLiked(reviewId, userId)) throw 'Review is already liked by this user';
 	const reviewsCollection = await reviews();
 	let updateInformation;
-	if (isReviewDisliked(reviewId, userId)){
-		updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $pull: {"dislikes": ObjectId(userId)} });
-		if (updateInformation["nModified"] != 1) throw 'Update failed';
+	if (await isReviewDisliked(reviewId, userId)){
+		updateInformation = await reviewsCollection.updateOne({ "_id": ObjectId(reviewId) }, { $pull: {"dislikes": ObjectId(userId)} });
+		if (updateInformation["modifiedCount"] != 1) throw 'Update failed';
 	}
-	updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $push: {"likes": ObjectId(userId)} });
-	if (updateInformation["nModified"] != 1) throw 'Update failed';
+	updateInformation = await reviewsCollection.updateOne({ "_id": ObjectId(reviewId) }, { $push: {"likes": ObjectId(userId)} });
+	if (updateInformation["modifiedCount"] != 1) throw 'Update failed';
 	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (updatedReview == null) throw 'No review found with that ID';
-	updatedReview["_id"] = updateReview["_id"].toString();
-	updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
+	updatedReview["_id"] = updatedReview["_id"].toString();
+	//updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
 	return updatedReview;
 }
 
@@ -207,19 +237,19 @@ const dislikeReview = async function dislikeReview(reviewId, userId){
 	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
 	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
 	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
-	if (isReviewDisiked(reviewId, userId)) throw 'Review is already disliked by this user';
+	if (await isReviewDisliked(reviewId, userId)) throw 'Review is already disliked by this user';
 	const reviewsCollection = await reviews();
 	let updateInformation;
-	if (isReviewLiked(reviewId, userId)){
-		updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $pull: {"likes": ObjectId(userId)} });
-		if (updateInformation["nModified"] != 1) throw 'Update failed';
+	if (await isReviewLiked(reviewId, userId)){
+		updateInformation = await reviewsCollection.updateOne({ "_id": ObjectId(reviewId) }, { $pull: {"likes": ObjectId(userId)} });
+		if (updateInformation["modifiedCount"] != 1) throw 'Update failed';
 	}
-	updateInformation = await reviewsCollection.update({ "_id": ObjectId(reviewId) }, { $push: {"dislikes": ObjectId(userId)} });
-	if (updateInformation["nModified"] != 1) throw 'Update failed';
+	updateInformation = await reviewsCollection.updateOne({ "_id": ObjectId(reviewId) }, { $push: {"dislikes": ObjectId(userId)} });
+	if (updateInformation["modifiedCount"] != 1) throw 'Update failed';
 	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (updatedReview == null) throw 'No review found with that ID';
-	updatedReview["_id"] = updateReview["_id"].toString();
-	updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
+	updatedReview["_id"] = updatedReview["_id"].toString();
+	//updateRating(updatedReview.artist_id, updatedReview.album_id, updatedReview.song_id);
 	return updatedReview;
 }
 
@@ -420,6 +450,7 @@ async function updateRating(artistId, albumId, songId){
 
 module.exports = {
 	createDiscussion,
+	createComment,
 	createReview,
 	isReviewLiked,
 	isReviewDisliked,
