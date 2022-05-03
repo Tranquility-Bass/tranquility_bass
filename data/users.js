@@ -14,7 +14,7 @@ function checkInput(val, type) {
         if (val.length < 4) throw `Username is too short`;
         let validchars = "qwertyuiopasdfghjklzxcvbnm1234567890";
         for (let i=0; i<val.length; i++){
-            if (!validchars.includes(val[i])) throw `Invalid character ${val[i]} supplied in username.`;
+            if (!validchars.includes(val[i].toLowerCase())) throw `Invalid character ${val[i]} supplied in username.`;
         }
         val = val.toLowerCase();
     }
@@ -58,6 +58,18 @@ async function createUser(username, password, email) {
 	//return {userInserted: true};
 }
 
+async function userInfo(username){
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    username = checkInput(username,'username');
+
+    const userCollection = await users();
+
+    const user = await userCollection.findOne({ username: username });
+    if (!user) throw `Either the username or password is invalid`;
+
+    return user;
+}
+
 async function checkUser(username, password) {
     if (arguments.length > 2) throw `Too many arguments passed.`
     username = checkInput(username,'username');
@@ -83,4 +95,4 @@ async function checkUser(username, password) {
     }
 }
 
-module.exports = {createUser,checkUser};
+module.exports = {createUser,checkUser, userInfo};
