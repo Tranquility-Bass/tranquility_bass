@@ -16,9 +16,9 @@ router
 	}
     try {
       let searchResults = await searchData.getSearchResult(req.params.searchTerm);
-	  let emptyArtist = !searchResults[0].length == 0;
-      let emptyAlbum = !searchResults[1].length == 0;
-      let emptySong = !searchResults[2].length == 0;
+	  let emptyArtist = searchResults[0].length == 0;
+      let emptyAlbum = searchResults[1].length == 0;
+      let emptySong = searchResults[2].length == 0;
 
       let val = {
           title: "Search Results",

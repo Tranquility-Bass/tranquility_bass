@@ -21,14 +21,14 @@ async function getAllAlbumsFromArtist(artistId) {
 async function getAllAlbums() {
     if (arguments.length > 0) throw `Too many arguments passed.`
     const artistCollection = await artists();
-    const artistList = await artistCollection.find({}, {projection: {_id:1}}).toArray();
+    const artistList = await artistCollection.find({}).toArray();
 
     let allAlbums = [];
-    artistList.forEach(async element => {
-        const temp = await getAllAlbumsFromArtist(element._id.toString());
-        allAlbums += temp;
-    })
-
+	let temp;
+    for (let x of artistList) {
+        temp = await getAllAlbumsFromArtist(x._id.toString());
+        allAlbums = allAlbums.concat(temp);
+    }
     return allAlbums;
 }
 
@@ -37,9 +37,9 @@ async function getAllSongs() {
 
     let albums = await getAllAlbums();
     let allSongs = [];
-    albums.forEach(element => {
-        allSongs.push(element.songs);
-    })
+    for (let x of albums){
+        allSongs = allSongs.concat(x.songs);
+    }
 
     return allSongs;
 }
