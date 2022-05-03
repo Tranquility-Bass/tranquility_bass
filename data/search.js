@@ -417,9 +417,11 @@ async function updateRating(artistId, albumId, songId){
 	}
 
     let reviews;
+
 	if (mode == "artist") reviews = await getReviews(artistId);
 	if (mode == "album") reviews = await getReviews(albumId);
 	if (mode == "song") reviews = await getReviews(songId);
+	
 
     let likes = 0;
     let dislikes = 0;
@@ -442,7 +444,7 @@ async function updateRating(artistId, albumId, songId){
 		const artistCollection = await artists();
 		const updatedRating = await artistCollection.updateOne(
 			{ "albums._id": ObjectId(albumId) },
-			{$set : {avgRating : avgRating}}
+			{'$set' : {"albums.$.avgRating" : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;
 		return {ratingUpdated : true};
@@ -450,8 +452,8 @@ async function updateRating(artistId, albumId, songId){
 	else if (mode == "song") {
 		const artistCollection = await artists();
 		const updatedRating = await artistCollection.updateOne(
-			{ "songs._id": ObjectId(songId) },
-			{$set : {avgRating : avgRating}}
+			{ "albums.songs._id": ObjectId(songId) },
+			{$set : {"albums.songs.$.avgRating" : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;
 		return {ratingUpdated : true};

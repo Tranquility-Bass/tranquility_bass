@@ -3,6 +3,42 @@ const mongoCollections = require("../config/mongoCollections")
 const artists = mongoCollections.artists;
 const validate = require("./validation");
 
+async function getSongsFromAlbum(albumId){
+    if (arguments.length > 1) throw `Too many arguments passed.`;
+    albumId = validate.checkInput(albumId, "album id", "string");
+    if (!ObjectId.isValid(albumId)) throw `album id is not a valid ObjectId`;
+
+    const artistCollection = await artists();
+    const getAlbum = await artistCollection.findOne(
+        {"albums._id": ObjectId(albumId)}
+    );
+
+    if (!getAlbum) throw `Album does not exist.`;
+
+    let result;
+    getAlbum.albums.forEach(element => {
+        if (element._id.equals(ObjectId(albumId))) {
+            result = element.songs;
+        }
+    })
+    return result;
+}
+
+async function getSongId(albumId, title) {
+    if (arguments.length > 2) throw `Too many arguments passed.`;
+    albumId = validate.checkInput(albumId, "album id", "string");
+    if (!ObjectId.isValid(albumId)) throw `album id is not a valid ObjectId`;
+    title = validate.checkInput(title, "title", "string");
+
+    const songs = await getSongsFromAlbum(albumId);
+
+    let res;
+    songs.forEach(element => {
+        if (element.title == (title)) res = element._id;
+    })
+    return res;
+}
+
 async function getAllAlbumsFromArtist(artistId) {
     if (arguments.length > 1) throw `Too many arguments passed.`;
     artistId = validate.checkInput(artistId, "artist id", "string");
@@ -136,4 +172,4 @@ async function createAlbum(artistId, title, songs) {
     return newAlbum;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs};
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId};
