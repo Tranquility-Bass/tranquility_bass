@@ -320,13 +320,13 @@ const getById = async function getById(searchId){
 			else {
 				for (let x of result["albums"]) {
 					for (let y of x["songs"]) {
-						if (y["_id"] === ObjectId(searchId)) return y;
+						if (y["_id"].equals(ObjectId(searchId))) return y;
 					}
 				}
 			}
 		} else {
 			for (let x of result["albums"]) {
-				if (x["_id"] === ObjectId(searchId)) return x;
+				if (x["_id"].equals(ObjectId(searchId))) return x;
 			}
 		}
 	}
@@ -345,7 +345,7 @@ const getDiscussions = async function getDiscussions(searchId){
 	let discussions = [];
 	let temp;
 	for (let x of result["discussions"]){
-		temp = await reviewsCollection.findOne({ "_id": ObjectId(x) });
+		temp = await forumsCollection.findOne({ "_id": ObjectId(x) });
 		if (temp == null) throw "No discussions found with that ID";
 		discussions.push(temp);
 	}
