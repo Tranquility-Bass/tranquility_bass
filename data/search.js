@@ -279,13 +279,8 @@ const getSearchResult = async function getSearchResult(searchTerm){
 			albumsResults.push(x);
 		}
 	}
-	const allSongs = await albums.getAllSongs();
-	let songsResults = [];
-	for (let x of allSongs){
-		if (x.title.toLowerCase().includes(searchTerm.toLowerCase())){
-			songsResults.push(x);
-		}
-	}
+	const songsCollection = await songs();
+	let songsResults = await songsCollection.find({ title: {$regex: searchTerm, $options: "i"} }).toArray();
 	if (artistResults == null) results[0] = [];
 	else results[0] = artistResults;
 	//console.log(albumsResults);
