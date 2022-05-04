@@ -42,8 +42,8 @@ async function main () {
 	
 	const loveMeId = await albumsData.getSongId(btr_a1._id.toString(), "Love Me Love Me");
 	const loveMeDiscussion = await searchData.createDiscussion(btr._id.toString(), btr_a1._id.toString(), loveMeId._id, "Love Me Love Me Discussion", "This is a discussion about elevate's song Love Me Love Me", "05/02/2022", user1._id.toString());
-	const loveMeReview = await searchData.createReview(btr._id.toString(), btr_a1._id.toString(), loveMeId._id, "Love Me Review", "This is a review about love me love me", "05/03/2022", user2._id.toString());
-	const a = await searchData.likeReview(loveMeReview._id.toString(), user2._id.toString());
+	//const loveMeReview = await searchData.createReview(btr._id.toString(), btr_a1._id.toString(), loveMeId._id, "Love Me Review", "This is a review about love me love me", "05/03/2022", user2._id.toString());
+	//const a = await searchData.likeReview(loveMeReview._id.toString(), user2._id.toString());
 
 	//const songCollection = await songs();
 	//console.log(await songCollection.findOne({ "_id": loveMeId._id }));

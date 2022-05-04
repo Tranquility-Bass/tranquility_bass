@@ -71,18 +71,6 @@ async function getAllAlbums() {
     return allAlbums;
 }
 
-async function getAllSongs() {
-    if (arguments.length > 0) throw `Too many arguments passed.`;
-
-    let albums = await getAllAlbums();
-    let allSongs = [];
-    for (let x of albums){
-        allSongs = allSongs.concat(x.songs);
-    }
-
-    return allSongs;
-}
-
 async function getTopAlbums(){ 
     if (arguments.length > 0) throw `Too many arguments passed.`;
 
@@ -110,12 +98,13 @@ async function getTopAlbums(){
 async function getTopSongs(){ 
     if (arguments.length > 0) throw `Too many arguments passed.`;
 
-    let songs = await getAllSongs();
+    let songCollection = await songs();
+    let songList = await songCollection.find({}).toArray();
     
     let top3 = [];
     let highest = [0,0,0];
 
-    songs.forEach(element => {
+    songList.forEach(element => {
         if (element.avgRating > highest[0]){
             highest[0] = element.avgRating;
             top3[0] = element;
@@ -214,5 +203,5 @@ async function getSong(id) {
     return song;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId, createSongs, get, getSong};
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getSongsFromAlbum, getSongId, createSongs, get, getSong};
 
