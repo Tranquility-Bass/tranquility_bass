@@ -17,6 +17,18 @@ router.get('/', async (req, res) => {
 
 });
 
+router.post('/', async (req, res) =>{
+    
+    const {searchTerm} = req.body;
+
+    if(req.session.user){
+        res.redirect('search/'+ searchTerm);
+    }else{
+        res.redirect('search/'+ searchTerm);
+    }
+
+});
+
 router.get('/about', async (req, res) => {
     if(req.session.user){
         res.render('pages/about');
