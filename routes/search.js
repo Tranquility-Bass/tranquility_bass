@@ -12,7 +12,7 @@ router
 		req.params.searchTerm = req.params.searchTerm.trim();
 		if (req.params.searchTerm === "")throw 'Search term must be a non empty string';
 	} catch (e) {
-		res.render('pages/error', {error: e, title: "Search Results"});
+		res.render('pages/error', {error: e, title: "Search Results", link: "/", link_text: "Back To Homepage"});
 	}
     try {
       let searchResults = await searchData.getSearchResult(req.params.searchTerm);
@@ -34,6 +34,12 @@ router
     } catch (e) {
       res.render('pages/error', {error: e, title: "Search Results"});
     }
+  })
+
+router
+  .route('/')
+  .get(async (req, res) => {
+    res.render('pages/error', {error: "Search Field Cannot Be Empty", title: "Search Results", link: "/", link_text: "Back To Homepage"});
   })
 
 module.exports = router;

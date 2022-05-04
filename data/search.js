@@ -6,6 +6,7 @@ const users = mongoCollections.users;
 const albums = require("./albums");
 const { ObjectId } = require('mongodb');
 const validate = require('./validation');
+const { songs } = require('../config/mongoCollections');
 
 const createDiscussion = async function createDiscussion(artistId, albumId, songId, title, body, datePosted, userId){
 	if (arguments.length != 7) throw 'Must input seven values';
@@ -25,9 +26,6 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 		if (!ObjectId.isValid(albumId)) throw 'invalid album ID';
 		albumId = ObjectId(albumId);
 		if (songId != null){
-			if (typeof songId != 'string') throw 'Song ID must be null or a string';
-			songId = songId.trim();
-			if (songId === "") throw 'Song ID must be a non empty string';
 			if (!ObjectId.isValid(songId)) throw 'invalid album ID';
 		}
 	}
@@ -61,10 +59,10 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 	const insertInfo = await forumsCollection.insertOne(newDiscussion);
 	if (!insertInfo.acknowledged || !insertInfo.insertedId) throw 'Could not add discussion';
 	const artistsCollection = await artists();
+	const songCollection = await songs();
 	if (albumId != null){
 		if (songId != null){
-			//TODO
-			//await artistsCollection.updateOne({ "albums.songs.title": song }, { $push: {"albums.$.songs.$.discussions": newDiscussion["_id"]} });
+			await songCollection.updateOne({ "_id": songId }, { $push: {"discussions": newDiscussion["_id"]} });
 		} else {
 			await artistsCollection.updateOne({ "albums._id": albumId }, { $push: {"albums.$.discussions": newDiscussion["_id"]} });
 		}
@@ -121,9 +119,6 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 		if (!ObjectId.isValid(albumId)) throw 'invalid album ID';
 		albumId = ObjectId(albumId);
 		if (songId != null){
-			if (typeof songId != 'string') throw 'Song ID must be null or a string';
-			songId = songId.trim();
-			if (songId === "") throw 'Song ID must be a non empty string';
 			if (!ObjectId.isValid(songId)) throw 'invalid album ID';
 		}
 	}
@@ -147,7 +142,7 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 		_id: ObjectId(),
 		artist_id: ObjectId(artistId),
 		album_id: albumId,
-		song: ObjectId(songId),
+		song: songId,
 		title: title,
 		body: body,
 		date_posted: datePosted,
@@ -159,10 +154,10 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 	const insertInfo = await reviewsCollection.insertOne(newReview);
 	if (!insertInfo.acknowledged || !insertInfo.insertedId) throw 'Could not add review';
 	const artistsCollection = await artists();
+	const songCollection = await songs();
 	if (albumId != null){
 		if (songId != null){
-			//TODO
-			//await artistsCollection.updateOne({ "albums.songs._id": songId }, { "$push": {"albums.songs.$.reviews": newReview["_id"]} });
+			await songCollection.updateOne({ "_id": songId }, { "$push": {"reviews": newReview["_id"]} });
 		} else {
 			await artistsCollection.updateOne({ "albums._id": albumId }, { "$push": {"albums.$.reviews": newReview["_id"]} });
 		}
@@ -234,7 +229,7 @@ const likeReview = async function likeReview(reviewId, userId){
 	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
 	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
 	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
-	updateRating(artI, alI, songI);
+	await updateRating(artI, alI, songI);
 
 	return updatedReview;
 }
@@ -264,7 +259,7 @@ const dislikeReview = async function dislikeReview(reviewId, userId){
 	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
 	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
 	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
-	updateRating(artI, alI, songI);
+	await updateRating(artI, alI, songI);
 
 	return updatedReview;
 }
@@ -284,13 +279,8 @@ const getSearchResult = async function getSearchResult(searchTerm){
 			albumsResults.push(x);
 		}
 	}
-	const allSongs = await albums.getAllSongs();
-	let songsResults = [];
-	for (let x of allSongs){
-		if (x.title.toLowerCase().includes(searchTerm.toLowerCase())){
-			songsResults.push(x);
-		}
-	}
+	const songsCollection = await songs();
+	let songsResults = await songsCollection.find({ title: {$regex: searchTerm, $options: "i"} }).toArray();
 	if (artistResults == null) results[0] = [];
 	else results[0] = artistResults;
 	//console.log(albumsResults);
@@ -434,9 +424,15 @@ async function updateRating(artistId, albumId, songId){
 
     let reviews;
 
-	if (mode == "artist") reviews = await getReviews(artistId);
-	if (mode == "album") reviews = await getReviews(albumId);
-	if (mode == "song") reviews = await getReviews(songId);
+	if (mode == "artist"){
+		reviews = await getReviews(artistId);
+	}
+	if (mode == "album"){
+		reviews = await getReviews(albumId);
+	}
+	if (mode == "song"){
+		reviews = await getReviews(songId);
+	}
 	
 
     let likes = 0;
@@ -447,8 +443,9 @@ async function updateRating(artistId, albumId, songId){
     })
     let avgRating;
 	(dislikes == 0) ? avgRating = likes : avgRating = Math.round(likes / dislikes);
+	const artistCollection = await artists();
+	const songCollection = await songs();
 	if (mode == "artist") {
-		const artistCollection = await artists();
 		const updatedRating = await artistCollection.updateOne(
 			{_id: ObjectId(artistId)},
 			{$set : {avgRating : avgRating}}
@@ -457,7 +454,6 @@ async function updateRating(artistId, albumId, songId){
 		return {ratingUpdated : true};
 	}
 	else if (mode == "album") {
-		const artistCollection = await artists();
 		const updatedRating = await artistCollection.updateOne(
 			{ "albums._id": ObjectId(albumId) },
 			{'$set' : {"albums.$.avgRating" : avgRating}}
@@ -466,10 +462,9 @@ async function updateRating(artistId, albumId, songId){
 		return {ratingUpdated : true};
 	}
 	else if (mode == "song") {
-		const artistCollection = await artists();
-		const updatedRating = await artistCollection.updateOne(
-			{ "albums.songs._id": ObjectId(songId) },
-			{$set : {"albums.songs.$.avgRating" : avgRating}}
+		const updatedRating = await songCollection.updateOne(
+			{ "_id": songId },
+			{$set : {"avgRating" : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;
 		return {ratingUpdated : true};

@@ -31,12 +31,14 @@ async function getSongId(albumId, title) {
     if (!ObjectId.isValid(albumId)) throw `album id is not a valid ObjectId`;
     title = validate.checkInput(title, "title", "string");
 
-    const songs = await getSongsFromAlbum(albumId);
+    const songsList = await getSongsFromAlbum(albumId);
+    const songCollection = await songs();
 
     let res;
-    songs.forEach(element => {
-        if (element.title == (title)) res = element._id;
-    })
+    for (let i = 0; i<songsList.length; i++){
+        const getSong = await songCollection.findOne({_id: ObjectId(songsList[i])});
+        if (getSong.title == title) res = getSong;
+    }
     return res;
 }
 
@@ -185,14 +187,13 @@ async function createAlbum(artistId, title, songs) {
     return newAlbum;
 }
 
-<<<<<<< HEAD
 async function get(id) {
     if (arguments.length > 1) throw `Too many arguments passed.`
     id = validate.checkInput(id, "id",'string');
     if (!ObjectId.isValid(id)) throw `Albumid is not a valid ObjectId`;
     
     const artistCollection = await artists();
-    const artist = await artistCollection.findOne({ albums._id: ObjectId(id) });
+    const artist = await artistCollection.findOne({ "albums._id": ObjectId(id) });
     if (!artist) throw 'No album with that id';
 	for (let x of artist["albums"]){
 		if(x["_id"].equals(ObjectId(id))) return x;
@@ -213,5 +214,5 @@ async function getSong(id) {
     return song;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId, get, getSong};
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId, createSongs, get, getSong};
 
