@@ -35,7 +35,7 @@ app.use(session({
 
 app.use('/private', (req, res, next) => {
   if (!req.session.user) {
-    return res.status(403).render('pages/login', {
+    return res.status(403).render('pages/account/login', {
 		title: "Login",
 		name: "Login",
 		error: "You are not logged in"

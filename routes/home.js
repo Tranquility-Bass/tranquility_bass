@@ -59,7 +59,8 @@ router.get('/all/:searchId', async (req, res) => {
           discussions: discussions,
           reviews: reviews,
           emptyDiscussions : emptyDiscussions,
-          emptyReviews : emptyReviews
+          emptyReviews : emptyReviews,
+          searchTerm: req.params.searchId
       }
 
       res.render('pages/search/all', val);

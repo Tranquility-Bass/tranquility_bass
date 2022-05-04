@@ -10,10 +10,11 @@ router
   .route('/')
   .get(async (req, res) => {
     if (!req.session.user) {
-        return res.status(403).render('pages/login', {
+        return res.status(403).render('pages/account/login', {
             title: "Login",
             name: "Login",
-            error: "You must be logged in to view this page."
+            error: "You must be logged in to view this page.",
+            route: "/private/addTopic"
         });
     }
     
@@ -80,7 +81,7 @@ router
 
     try {
         let name = validate.checkInput(formData.artistName, "artist name", "string");
-        const artist = await artistData.createArtist(name);
+        const artist = await artistData.create(name);
 
         if (artist) {
             let val = {

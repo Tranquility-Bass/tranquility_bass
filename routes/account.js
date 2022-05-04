@@ -19,7 +19,7 @@ router.get('/login', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     
-    const { username, password } = req.body;
+    const { username, password, routeTo } = req.body;
     
     if(!username || !password){  
         res.status(400).render('pages/account/login', {title: "Login", error: "'username' and 'password' must be supplied"});
@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
         }else{
             req.session.user = {username: username, password: password};
             //redirect to home page
-            res.redirect('/');
+            res.redirect("/");
         }
             
     }catch(e){

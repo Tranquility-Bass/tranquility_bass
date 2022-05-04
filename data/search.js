@@ -283,30 +283,8 @@ const getSearchResult = async function getSearchResult(searchTerm){
 	let songsResults = await songsCollection.find({ title: {$regex: searchTerm, $options: "i"} }).toArray();
 	if (artistResults == null) results[0] = [];
 	else results[0] = artistResults;
-	//console.log(albumsResults);
 	results[1] = albumsResults;
 	results[2] = songsResults;
-	/*let result = [];
-	for (let x of albumsResults){
-		for (let y of x["albums"]){
-			if (y["title"].toLowerCase().includes(searchTerm.toLowerCase())){
-				result.push(y);
-			}
-		}
-	}
-	results[1] = result.slice(0);
-	result = [];
-	for (let x of songsResults){
-		for (let y of x["albums"]){
-			for (let z of y["songs"]){
-				if (z["title"].toLowerCase().includes(searchTerm.toLowerCase())){
-					result.push(z);
-				}
-			}
-		}
-	}
-	results[2] = result.slice(0);*/
-	console.log(results);
 	return results;
 }
 
