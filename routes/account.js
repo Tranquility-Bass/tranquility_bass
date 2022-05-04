@@ -33,8 +33,8 @@ router.post('/login', async (req, res) => {
             return;
         }else{
             req.session.user = {username: username, password: password};
-            // Will redirect to home page when created
-            res.redirect('/private');
+            //redirect to home page
+            res.redirect('/');
         }
             
     }catch(e){
@@ -47,8 +47,8 @@ router.post('/login', async (req, res) => {
 router.get('/signup', async (req, res) =>{
 
     if(req.session.user){
-        //will go to homepage with user logged in when created
-        res.redirect('pages/account/error', {title: "Error", error: "You are already signed In", link: "Link to Homepage when Created", link_text: "Back to Homepage"});
+        //Link Back to Homepage
+        res.redirect('pages/account/error', {title: "Error", error: "You are already signed In", link: '/', link_text: "Back to Homepage"});
     }else{
         res.render('pages/account/signup', {title: "Create An Account"});
     }
