@@ -76,29 +76,30 @@ router.get('/discuss/:discussionId', async (req, res) => {
 		if (req.params.discussionId === "")throw 'Discussion ID must be a non empty string';
 		if (!ObjectId.isValid(req.params.discussionId)) throw 'invalid discussion ID';
 	} catch (e) {
-		res.render('pages/error', {error: e, title: "Discussions and Reviews"});
+		res.render('pages/error', {error: e, title: "Discussion"});
 	}
 	try {
-      let discussions = await searchData.getDiscussion(req.params.discussionId);
-	  let artist = await artistData.get(req.params.discussions.artist_id);
+      let discussion = await searchData.getDiscussion(req.params.discussionId);
+	  let artist = await artistData.get(discussion.artist_id.toString());
 	  let album = null;
-	  if (req.params.discussions.album_id) {
-		  album = await albumData.get(req.params.discussions.album_id);
+	  if (discussion.album_id) {
+		  album = await albumData.get(discussion.album_id.toString());
 		  album = album.title;
 	  }
 	  let song = null;
-	  if (req.params.discussions.song_id) {
-		  song = await albumData.getSong(req.params.discussions.song_id);
+	  if (discussion.song_id) {
+		  song = await albumData.getSong(discussion.song_id.toString());
 		  song = song.title;
 	  }
-	  let emptyComments = discussions.comments.length == 0;
+	  let emptyComments = discussion.comments.length == 0;
 
       let val = {
-          title: discussions.title,
+          title: discussion.title,
 		  artist: artist.name,
 		  album: album,
 		  song: song,
-          discussion: discussions.body,
+          discussion: discussion.body,
+		  date_posted: discussion.date_posted,
           emptyComments: emptyComments,
 		  comments: discussion.comments
       }
@@ -106,6 +107,46 @@ router.get('/discuss/:discussionId', async (req, res) => {
       res.render('pages/search/discussions', val);
     } catch (e) {
       res.render('pages/error', {error: e, title: "Discussion"});
+    }
+});
+
+router.get('/review/:reviewId', async (req, res) => {
+	try {
+		if (typeof req.params.reviewId != 'string') throw 'Review ID must be a string';
+		req.params.reviewId = req.params.reviewId.trim();
+		if (req.params.reviewId === "")throw 'Review ID must be a non empty string';
+		if (!ObjectId.isValid(req.params.reviewId)) throw 'invalid review ID';
+	} catch (e) {
+		res.render('pages/error', {error: e, title: "Review"});
+	}
+	try {
+      let review = await searchData.getReview(req.params.reviewId);
+	  let artist = await artistData.get(review.artist_id.toString());
+	  let album = null;
+	  if (review.album_id) {
+		  album = await albumData.get(review.album_id.toString());
+		  album = album.title;
+	  }
+	  let song = null;
+	  if (review.song_id) {
+		  song = await albumData.getSong(review.song_id.toString());
+		  song = song.title;
+	  }
+
+      let val = {
+          title: review.title,
+		  artist: artist.name,
+		  album: album,
+		  song: song,
+          review: review.body,
+		  date_posted: review.date_posted,
+          likes: review.likes.length,
+		  dislikes: review.dislikes.length
+      }
+
+      res.render('pages/search/reviews', val);
+    } catch (e) {
+      res.render('pages/error', {error: e, title: "Review"});
     }
 });
 

@@ -366,6 +366,18 @@ const getReviews = async function getReviews(searchId){
 	return allReviews;
 }
 
+const getReview = async function getReview(reviewId){
+	if (arguments.length != 1) throw 'Must input one value';
+	if (typeof reviewId != 'string') throw 'Review ID must be a string';
+	reviewId = reviewId.trim();
+	if (reviewId === "")throw 'Review ID must be a non empty string';
+	if (!ObjectId.isValid(reviewId)) throw 'review ID must be a valid object ID';
+	let reviewsCollection = await reviews();
+	let review = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
+	if (!review) throw 'No review found with that ID';
+	return review;
+}
+
 /*const remove = async function remove(albumId){
 	if (typeof albumId != 'string') throw 'Album ID must be a string';
 	albumId = albumId.trim();
@@ -463,5 +475,6 @@ module.exports = {
 	getById,
 	getDiscussions,
 	getDiscussion,
-	getReviews
+	getReviews,
+	getReview
 }

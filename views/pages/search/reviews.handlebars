@@ -1,0 +1,19 @@
+<h1> {{title}} </h1>
+<section>
+	<h2>{{artist}}</h2>
+	
+	{{#if album}}
+        <h3>{{album}}</h3>
+    {{/if}}
+	
+	{{#if song}}
+        <h3>{{song}}</h3>
+    {{/if}}
+	
+    <h5>{{review}}</h5>
+
+    <p>Number of likes: {{likes}}</p>
+	<p>Number of dislikes: {{dislikes}}</p>
+	
+	<p>Date Posted: {{date_posted}}</p>
+</section>
