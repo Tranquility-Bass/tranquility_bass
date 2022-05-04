@@ -187,7 +187,7 @@ const isReviewLiked = async function isReviewLiked(reviewId, userId){
 	return false;
 }
 
-const isReviewDisliked = async function isReviewiked(reviewId, userId){
+const isReviewDisliked = async function isReviewDisliked(reviewId, userId){
 	if (arguments.length != 2) throw 'Must input two values';
 	if (typeof reviewId != 'string' || typeof userId != 'string') throw 'Review ID and user ID must be strings';
 	reviewId = reviewId.trim();
