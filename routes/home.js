@@ -139,6 +139,7 @@ router.get('/review/:reviewId', async (req, res) => {
 		  song: song,
           review: review.body,
 		  date_posted: review.date_posted,
+		  id: review._id.toString(),
           likes: review.likes.length,
 		  dislikes: review.dislikes.length
       }
