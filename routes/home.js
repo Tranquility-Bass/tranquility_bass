@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const data = require('../data');
 const searchData = data.search;
+const artistData = data.artists;
+const albumData = data.albums;
 const { ObjectId } = require('mongodb');
 
 
@@ -51,6 +53,46 @@ router.get('/all/:searchId', async (req, res) => {
       res.render('pages/search/all', val);
     } catch (e) {
       res.render('pages/error', {error: e, title: "Search Results"});
+    }
+});
+
+router.get('/discuss/:discussionId', async (req, res) => {
+	try {
+		if (typeof req.params.discussionId != 'string') throw 'Discussion ID must be a string';
+		req.params.discussionId = req.params.discussionId.trim();
+		if (req.params.discussionId === "")throw 'Discussion ID must be a non empty string';
+		if (!ObjectId.isValid(req.params.discussionId)) throw 'invalid discussion ID';
+	} catch (e) {
+		res.render('pages/error', {error: e, title: "Discussions and Reviews"});
+	}
+	try {
+      let discussions = await searchData.getDiscussion(req.params.discussionId);
+	  let artist = await artistData.get(req.params.discussions.artist_id);
+	  let album = null;
+	  if (req.params.discussions.album_id) {
+		  album = await albumData.get(req.params.discussions.album_id);
+		  album = album.title;
+	  }
+	  let song = null;
+	  if (req.params.discussions.song_id) {
+		  song = await albumData.getSong(req.params.discussions.song_id);
+		  song = song.title;
+	  }
+	  let emptyComments = discussions.comments.length == 0;
+
+      let val = {
+          title: discussions.title,
+		  artist: artist.name,
+		  album: album,
+		  song: song,
+          discussion: discussions.body,
+          emptyComments: emptyComments,
+		  comments: discussion.comments
+      }
+
+      res.render('pages/search/discussions', val);
+    } catch (e) {
+      res.render('pages/error', {error: e, title: "Discussion"});
     }
 });
 

@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const mongoCollections = require("../config/mongoCollections")
 const artists = mongoCollections.artists;
+const songs = mongoCollections.songs;
 const validate = require("./validation");
 
 async function getSongsFromAlbum(albumId){
@@ -172,4 +173,31 @@ async function createAlbum(artistId, title, songs) {
     return newAlbum;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId};
+async function get(id) {
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    id = validate.checkInput(id, "id",'string');
+    if (!ObjectId.isValid(id)) throw `Albumid is not a valid ObjectId`;
+    
+    const artistCollection = await artists();
+    const artist = await artistCollection.findOne({ albums._id: ObjectId(id) });
+    if (!artist) throw 'No album with that id';
+	for (let x of artist["albums"]){
+		if(x["_id"].equals(ObjectId(id))) return x;
+	}
+	throw 'Find failed';
+}
+
+async function getSong(id) {
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    id = validate.checkInput(id, "id",'string');
+    if (!ObjectId.isValid(id)) throw `Songid is not a valid ObjectId`;
+    
+    const songsCollection = await songs();
+    const song = await songsCollection.findOne({ _id: ObjectId(id) });
+    if (!song) throw 'No song with that id';
+
+    song._id = song._id.toString();
+    return song;
+}
+
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId, get, getSong};

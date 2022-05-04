@@ -364,6 +364,18 @@ const getDiscussions = async function getDiscussions(searchId){
 	return discussions;
 }
 
+const getDiscussion = async function getDiscussion(discussionId){
+	if (arguments.length != 1) throw 'Must input one value';
+	if (typeof discussionId != 'string') throw 'Discussion ID must be a string';
+	discussionId = discussionId.trim();
+	if (discussionId === "")throw 'Discussion ID must be a non empty string';
+	if (!ObjectId.isValid(discussionId)) throw 'Discussion ID must be a valid object ID';
+	let forumsCollection = await forums();
+	let discussion = await forumsCollection.findOne({ "_id": ObjectId(discussionId) });
+	if (!discussion) throw 'No discussion found with that ID';
+	return discussion;
+}
+
 const getReviews = async function getReviews(searchId){
 	if (arguments.length != 1) throw 'Must input one value';
 	if (typeof searchId != 'string') throw 'Search ID must be a string';
@@ -474,5 +486,6 @@ module.exports = {
 	getSearchResult,
 	getById,
 	getDiscussions,
+	getDiscussion,
 	getReviews
 }

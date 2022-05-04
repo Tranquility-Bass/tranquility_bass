@@ -7,9 +7,12 @@
     {{/if}}
 
     {{#each discussions}}
-        <h6>
-            <p>{{body}}</p>
+		<h6>
+            <a href="/discuss/{{_id}}">{{name}}</a>
         </h6>
+        <h7>
+            <p>{{body}}</p>
+        </h7>
     {{/each}}
 </section>
 
@@ -21,8 +24,11 @@
     {{/if}}
 
     {{#each reviews}}
-        <h6>
-            <p>{{body}}</p>
+		<h6>
+            <a href="/review/{{_id}}">{{name}}</a>
         </h6>
+        <h7>
+            <p>{{body}}</p>
+        </h7>
     {{/each}}
 </section>
