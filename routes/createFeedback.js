@@ -7,6 +7,7 @@ const userData = data.users;
 const { userInfo } = require('../data/users');
 const searchData = data.search;
 const artistData = data.artists;
+const xss = require('xss');
 
 router
   .route('/review/:id')
@@ -60,6 +61,9 @@ router
         res.status(400).render('pages/create', val);
         return;
     }
+
+    formData.reviewName = xss(formData.reviewName);
+    formData.reviewBody = xss(formData.reviewBody);
 
     try {
         const ids = await searchData.getUpperInformation(req.params.id);
@@ -128,6 +132,9 @@ router
         res.status(400).render('pages/create', val);
         return;
     }
+
+    formData.discussionName = xss(formData.discussionName);
+    formData.discussionBody = xss(formData.discussionBody);
 
     try {
         const ids = await searchData.getUpperInformation(req.params.id);
@@ -203,6 +210,8 @@ router
         res.status(400).render('pages/comment', val);
         return;
     }
+
+    formData.commentResponse = xss(formData.commentResponse);
 
     try {
         let userID = await userData.userInfo(req.session.user.username);

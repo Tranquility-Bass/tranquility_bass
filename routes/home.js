@@ -6,6 +6,7 @@ const searchData = data.search;
 const artistData = data.artists;
 const albumData = data.albums;
 const { ObjectId } = require('mongodb');
+const xss = require('xss');
 
 
 router.get('/', async (req, res) => {
@@ -21,7 +22,9 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) =>{
     
-    const {searchTerm} = req.body;
+    let {searchTerm} = req.body;
+
+	searchTerm = xss(searchTerm);
 
     if(req.session.user){
         res.redirect('search/'+ searchTerm);

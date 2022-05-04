@@ -4,6 +4,7 @@ const mongoCollections = require("../config/mongoCollections")
 const totalUsers = mongoCollections.users;
 const data = require('../data');
 const users = data.users;
+const xss = require('xss');
 
 const router = express.Router();
 
@@ -19,7 +20,10 @@ router.get('/login', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     
-    const { username, password, routeTo } = req.body;
+    let { username, password, routeTo } = req.body;
+
+    username = xss(username);
+    password = xss(password);
     
     if(!username || !password){  
         res.status(400).render('pages/account/login', {title: "Login", error: "'username' and 'password' must be supplied"});
@@ -57,8 +61,12 @@ router.get('/signup', async (req, res) =>{
     
 router.post('/signup', async (req, res) => {
     
-    const { username, password, email } = req.body;
+    let { username, password, email } = req.body;
     
+    username = xss(username);
+    password = xss(password);
+    email = xss(email);
+
     if(!username || !password || !email){
         res.status(400).render('pages/account/signup', {title: "Login", error: "'username', 'password', and 'email' must be provided"});
     }

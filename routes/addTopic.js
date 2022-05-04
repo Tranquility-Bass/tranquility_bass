@@ -5,6 +5,7 @@ const data = require('../data');
 const validate = data.validation;
 const artistData = data.artists;
 const albumData = data.albums;
+const xss = require('xss');
 
 router
   .route('/')
@@ -35,6 +36,8 @@ router
         res.status(400).render('pages/addTopic/addTopicGeneral', val);
         return;
     }
+
+    formData.type = xss(formData.type);
 
     try {
       let type = validate.checkInput(formData.type, "type", "string");
@@ -78,6 +81,8 @@ router
         res.status(400).render('pages/addTopic/addArtist', val);
         return;
     }
+
+    formData.artistName = xss(formData.artistName);
 
     try {
         let name = validate.checkInput(formData.artistName, "artist name", "string");
@@ -137,6 +142,10 @@ router
         res.status(400).render('pages/addTopic/addAlbum', val);
         return;
     }
+
+    formData.artist = xss(formData.artist);
+    formData.albumName = xss(formData.albumName);
+    formData.albumSongs = xss(formData.albumSongs);
 
     try {
         let artist = validate.checkInput(formData.artist, "artist name", "string");

@@ -3,17 +3,21 @@ const { ObjectId } = require("mongodb");
 const router = express.Router();
 const data = require('../data');
 const searchData = data.search;
+const xss = require('xss');
 
 router
   .route('/:searchTerm')
   .get(async (req, res) => {
-	try {
-		if (typeof req.params.searchTerm != 'string') throw 'Search term must be a string';
-		req.params.searchTerm = req.params.searchTerm.trim();
-		if (req.params.searchTerm === "")throw 'Search term must be a non empty string';
-	} catch (e) {
-		res.render('pages/error', {error: e, title: "Search Results", link: "/", link_text: "Back To Homepage"});
-	}
+    try {
+      if (typeof req.params.searchTerm != 'string') throw 'Search term must be a string';
+      req.params.searchTerm = req.params.searchTerm.trim();
+      if (req.params.searchTerm === "")throw 'Search term must be a non empty string';
+    } catch (e) {
+      res.render('pages/error', {error: e, title: "Search Results", link: "/", link_text: "Back To Homepage"});
+    }
+
+    req.params.searchTerm = xss(req.params.searchTerm);
+
     try {
       let searchResults = await searchData.getSearchResult(req.params.searchTerm);
 	  let emptyArtist = searchResults[0].length == 0;
