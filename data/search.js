@@ -7,7 +7,7 @@ const albums = require("./albums");
 const { ObjectId } = require('mongodb');
 const validate = require('./validation');
 
-const createDiscussion = async function createDiscussion(artistId, albumId, song, title, body, datePosted, userId){
+const createDiscussion = async function createDiscussion(artistId, albumId, songId, title, body, datePosted, userId){
 	if (arguments.length != 7) throw 'Must input seven values';
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
@@ -24,10 +24,11 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 		if (albumId === "") throw 'Album ID must be a non empty string';
 		if (!ObjectId.isValid(albumId)) throw 'invalid album ID';
 		albumId = ObjectId(albumId);
-		if (song != null){
-			if (typeof song != 'string') throw 'Song ID must be null or a string';
-			song = song.trim();
-			if (song === "") throw 'Song ID must be a non empty string';
+		if (songId != null){
+			if (typeof songId != 'string') throw 'Song ID must be null or a string';
+			songId = songId.trim();
+			if (songId === "") throw 'Song ID must be a non empty string';
+			if (!ObjectId.isValid(songId)) throw 'invalid album ID';
 		}
 	}
 	for (let i = 0; i < datePosted.length; i++) {
@@ -50,7 +51,7 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 		_id: ObjectId(),
 		artist_id: ObjectId(artistId),
 		album_id: albumId,
-		song: song,
+		song: songId,
 		title: title,
 		body: body,
 		date_posted: datePosted,
@@ -61,8 +62,9 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 	if (!insertInfo.acknowledged || !insertInfo.insertedId) throw 'Could not add discussion';
 	const artistsCollection = await artists();
 	if (albumId != null){
-		if (song != null){
-			await artistsCollection.updateOne({ "albums.songs.title": song }, { $push: {"albums.$.songs.$.discussions": newDiscussion["_id"]} });
+		if (songId != null){
+			//TODO
+			//await artistsCollection.updateOne({ "albums.songs.title": song }, { $push: {"albums.$.songs.$.discussions": newDiscussion["_id"]} });
 		} else {
 			await artistsCollection.updateOne({ "albums._id": albumId }, { $push: {"albums.$.discussions": newDiscussion["_id"]} });
 		}
@@ -101,7 +103,7 @@ const createComment = async function createComment(discussionId, userId, body){
 	return newDiscussion;
 }
 
-const createReview = async function createReview(artistId, albumId, song, title, body, datePosted, userId){
+const createReview = async function createReview(artistId, albumId, songId, title, body, datePosted, userId){
 	if (arguments.length != 7) throw 'Must input seven values';
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
@@ -118,10 +120,11 @@ const createReview = async function createReview(artistId, albumId, song, title,
 		if (albumId === "") throw 'Album ID must be a non empty string';
 		if (!ObjectId.isValid(albumId)) throw 'invalid album ID';
 		albumId = ObjectId(albumId);
-		if (song != null){
-			if (typeof song != 'string') throw 'Song ID must be null or a string';
-			song = song.trim();
-			if (song === "") throw 'Song ID must be a non empty string';
+		if (songId != null){
+			if (typeof songId != 'string') throw 'Song ID must be null or a string';
+			songId = songId.trim();
+			if (songId === "") throw 'Song ID must be a non empty string';
+			if (!ObjectId.isValid(songId)) throw 'invalid album ID';
 		}
 	}
 	for (let i = 0; i < datePosted.length; i++) {
@@ -144,7 +147,7 @@ const createReview = async function createReview(artistId, albumId, song, title,
 		_id: ObjectId(),
 		artist_id: ObjectId(artistId),
 		album_id: albumId,
-		song: song,
+		song: ObjectId(songId),
 		title: title,
 		body: body,
 		date_posted: datePosted,
@@ -157,8 +160,9 @@ const createReview = async function createReview(artistId, albumId, song, title,
 	if (!insertInfo.acknowledged || !insertInfo.insertedId) throw 'Could not add review';
 	const artistsCollection = await artists();
 	if (albumId != null){
-		if (song != null){
-			await artistsCollection.updateOne({ "albums.songs.title": song }, { "$push": {"albums.songs.reviews": newReview["_id"]} });
+		if (songId != null){
+			//TODO
+			//await artistsCollection.updateOne({ "albums.songs._id": songId }, { "$push": {"albums.songs.$.reviews": newReview["_id"]} });
 		} else {
 			await artistsCollection.updateOne({ "albums._id": albumId }, { "$push": {"albums.$.reviews": newReview["_id"]} });
 		}
@@ -385,9 +389,9 @@ const getReviews = async function getReviews(searchId){
 	let result = await getById(searchId);
 	let reviewsCollection = await reviews();
 	let allReviews = [];
-	//let temp;
+	let temp;
 	for (let x of result["reviews"]){
-		const temp = await reviewsCollection.findOne({ "_id": ObjectId(x) });
+		temp = await reviewsCollection.findOne({ "_id": ObjectId(x) });
 		if (temp == null) throw "No reviews found with that ID";
 		allReviews.push(temp);
 	}

@@ -24,8 +24,10 @@ async function main () {
 	const btrReview = await searchData.createReview(btr._id.toString(), null, null, "Review One", "This is a review please like it", "05/02/2022", user1._id.toString());
 	const likeBtrReview = await searchData.likeReview(btrReview._id.toString(), user2._id.toString());
 	
-	const btr_a1 = await albumsData.createAlbum(btr._id, "Elevate", ["Elevate", "Love Me Love Me", "Cover Girl", "Music Sounds Better"]);
-    const btr_a2 = await albumsData.createAlbum(btr._id, "24/7", ['Run Wild', "Get Up", "Picture This", "Amazing"]);
+	const btr_a1_songs = await albumsData.createSongs(["Elevate", "Love Me Love Me", "Cover Girl", "Music Sounds Better"]);
+	const btr_a1 = await albumsData.createAlbum(btr._id, "Elevate", btr_a1_songs);
+	const btr_a2_songs = await albumsData.createSongs(['Run Wild', "Get Up", "Picture This", "Amazing"]);
+    const btr_a2 = await albumsData.createAlbum(btr._id, "24/7", btr_a2_songs);
 
 	const elevateDiscussion = await searchData.createDiscussion(btr._id.toString(), btr_a1._id.toString(), null, "Elevated Discussion", "This is a discussion about elevate", "05/01/2022", user1._id.toString());
 	const elevateComment = await searchData.createComment(elevateDiscussion._id.toString(), user1._id.toString(), "This is a comment");
@@ -38,7 +40,7 @@ async function main () {
 	//const loveMeDiscussion = await searchData.createDiscussion(btr._id.toString(), btr_a1._id.toString(), "Love Me Love Me", "Love Me Love Me Discussion", "This is a discussion about elevate's song Love Me Love Me", "05/02/2022", user1._id.toString());
     
 	const loveMe = await albumsData.getSongId(btr_a1._id.toString(), "Love Me Love Me");
-	const loveMeReview = await searchData.createReview(btr._id.toString(), btr_a1._id.toString(), loveMe.toString(), "Love Me Review", "This is a review about love me love me", "05/03/2022", user2._id.toString());
+	//const loveMeReview = await searchData.createReview(btr._id.toString(), btr_a1._id.toString(), loveMe.toString(), "Love Me Review", "This is a review about love me love me", "05/03/2022", user2._id.toString());
 	
 	const olivia_a1 = await albumsData.createAlbum(olivia._id, "Sour", ["Driver's License", "Good 4 U", "Traitor", "Deja Vu"]);
 
