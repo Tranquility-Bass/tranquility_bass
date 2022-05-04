@@ -1,0 +1,25 @@
+<h1> {{title}} </h1>
+<section>
+	<h2>{{artist}}</h2>
+	
+	{{#if album}}
+        <h3>{{album}}</h3>
+    {{/if}}
+	
+	{{#if song}}
+        <h3>{{song}}</h3>
+    {{/if}}
+	
+    <h5>{{discussion}}</h5>
+
+    {{#if emptyComments}}
+        <p>No Comments Found for this Discussion</p>
+    {{/if}}
+
+    {{#each comments}}
+		<h6>{{username}}</h6>
+        <h7>
+            <p>{{body}}</p>
+        </h7>
+    {{/each}}
+</section>

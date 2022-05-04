@@ -176,4 +176,37 @@ async function createAlbum(artistId, title, songs) {
     return newAlbum;
 }
 
+<<<<<<< HEAD
 module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getSongsFromAlbum, getSongId, createSongs};
+=======
+<<<<<<< HEAD
+async function get(id) {
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    id = validate.checkInput(id, "id",'string');
+    if (!ObjectId.isValid(id)) throw `Albumid is not a valid ObjectId`;
+    
+    const artistCollection = await artists();
+    const artist = await artistCollection.findOne({ albums._id: ObjectId(id) });
+    if (!artist) throw 'No album with that id';
+	for (let x of artist["albums"]){
+		if(x["_id"].equals(ObjectId(id))) return x;
+	}
+	throw 'Find failed';
+}
+
+async function getSong(id) {
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    id = validate.checkInput(id, "id",'string');
+    if (!ObjectId.isValid(id)) throw `Songid is not a valid ObjectId`;
+    
+    const songsCollection = await songs();
+    const song = await songsCollection.findOne({ _id: ObjectId(id) });
+    if (!song) throw 'No song with that id';
+
+    song._id = song._id.toString();
+    return song;
+}
+
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId, get, getSong};
+
+>>>>>>> b16016c8fd8c9b1d2035f402bec0143b20fdc165

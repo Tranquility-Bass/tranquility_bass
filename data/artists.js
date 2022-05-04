@@ -71,4 +71,4 @@ async function get(id) {
     return artist;
 }
 
-module.exports = {getTopArtists, create, getAllArtists};
+module.exports = {getTopArtists, create, getAllArtists, get};
