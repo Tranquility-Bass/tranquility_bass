@@ -43,6 +43,8 @@ async function main () {
 
 	console.log(await searchData.getDiscussions(btr_a1._id.toString()));
 
+	console.log(await searchData.getReviews(btr_a1._id.toString()));
+
     await connection.closeConnection();
 }
 
