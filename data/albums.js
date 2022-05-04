@@ -176,13 +176,6 @@ async function createAlbum(artistId, title, songs) {
     return newAlbum;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getSongsFromAlbum, getSongId, createSongs};
-=======
-<<<<<<< HEAD
-=======
->>>>>>> 22ba7394e58096aa2af4e1d9b62f138472d1bdcd
 async function get(id) {
     if (arguments.length > 1) throw `Too many arguments passed.`
     id = validate.checkInput(id, "id",'string');
@@ -210,6 +203,5 @@ async function getSong(id) {
     return song;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId, createSongs, get, getSong};
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getSongsFromAlbum, getSongId, createSongs, get, getSong};
 
->>>>>>> b16016c8fd8c9b1d2035f402bec0143b20fdc165
