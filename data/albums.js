@@ -31,12 +31,14 @@ async function getSongId(albumId, title) {
     if (!ObjectId.isValid(albumId)) throw `album id is not a valid ObjectId`;
     title = validate.checkInput(title, "title", "string");
 
-    const songs = await getSongsFromAlbum(albumId);
+    const songsList = await getSongsFromAlbum(albumId);
+    const songCollection = await songs();
 
     let res;
-    songs.forEach(element => {
-        if (element.title == (title)) res = element._id;
-    })
+    for (let i = 0; i<songsList.length; i++){
+        const getSong = await songCollection.findOne({_id: ObjectId(songsList[i])});
+        if (getSong.title == title) res = getSong;
+    }
     return res;
 }
 
