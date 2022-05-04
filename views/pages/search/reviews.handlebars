@@ -13,11 +13,11 @@
     <h5>{{review}}</h5>
 
     <p>Number of likes: {{likes}}</p>
-	<form id="review-like" action="/private/review/like/:{{id}}" method="POST">
+	<form id="review-like" action="/private/review/like/{{id}}" method="POST">
 		<button type="submit">Like</button>
 	</form>
 	<p>Number of dislikes: {{dislikes}}</p>
-	<form id="review-dislike" action="/private/review/dislike/:{{id}}" method="POST">
+	<form id="review-dislike" action="/private/review/dislike/{{id}}" method="POST">
 		<button type="submit">Dislike</button>
 	</form>
 	

@@ -187,7 +187,7 @@ const isReviewLiked = async function isReviewLiked(reviewId, userId){
 	return false;
 }
 
-const isReviewDisliked = async function isReviewiked(reviewId, userId){
+const isReviewDisliked = async function isReviewDisliked(reviewId, userId){
 	if (arguments.length != 2) throw 'Must input two values';
 	if (typeof reviewId != 'string' || typeof userId != 'string') throw 'Review ID and user ID must be strings';
 	reviewId = reviewId.trim();
@@ -283,30 +283,8 @@ const getSearchResult = async function getSearchResult(searchTerm){
 	let songsResults = await songsCollection.find({ title: {$regex: searchTerm, $options: "i"} }).toArray();
 	if (artistResults == null) results[0] = [];
 	else results[0] = artistResults;
-	//console.log(albumsResults);
 	results[1] = albumsResults;
 	results[2] = songsResults;
-	/*let result = [];
-	for (let x of albumsResults){
-		for (let y of x["albums"]){
-			if (y["title"].toLowerCase().includes(searchTerm.toLowerCase())){
-				result.push(y);
-			}
-		}
-	}
-	results[1] = result.slice(0);
-	result = [];
-	for (let x of songsResults){
-		for (let y of x["albums"]){
-			for (let z of y["songs"]){
-				if (z["title"].toLowerCase().includes(searchTerm.toLowerCase())){
-					result.push(z);
-				}
-			}
-		}
-	}
-	results[2] = result.slice(0);*/
-	console.log(results);
 	return results;
 }
 
@@ -445,7 +423,6 @@ async function updateRating(artistId, albumId, songId){
 	if (mode == "song"){
 		reviews = await getReviews(songId);
 	}
-	
 
     let likes = 0;
     let dislikes = 0;
@@ -467,7 +444,7 @@ async function updateRating(artistId, albumId, songId){
 	}
 	else if (mode == "album") {
 		const updatedRating = await artistCollection.updateOne(
-			{ "albums._id": ObjectId(albumId) },
+			{ "albums._id": albumId },
 			{'$set' : {"albums.$.avgRating" : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;
