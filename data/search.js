@@ -229,7 +229,7 @@ const likeReview = async function likeReview(reviewId, userId){
 	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
 	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
 	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
-	updateRating(artI, alI, songI);
+	await updateRating(artI, alI, songI);
 
 	return updatedReview;
 }
@@ -259,7 +259,7 @@ const dislikeReview = async function dislikeReview(reviewId, userId){
 	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
 	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
 	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
-	updateRating(artI, alI, songI);
+	await updateRating(artI, alI, songI);
 
 	return updatedReview;
 }
@@ -426,7 +426,6 @@ async function updateRating(artistId, albumId, songId){
 	if (mode == "song"){
 		reviews = await getReviews(songId);
 	}
-	
 
     let likes = 0;
     let dislikes = 0;
@@ -448,7 +447,7 @@ async function updateRating(artistId, albumId, songId){
 	}
 	else if (mode == "album") {
 		const updatedRating = await artistCollection.updateOne(
-			{ "albums._id": ObjectId(albumId) },
+			{ "albums._id": albumId },
 			{'$set' : {"albums.$.avgRating" : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;
