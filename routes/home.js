@@ -101,7 +101,8 @@ router.get('/discuss/:discussionId', async (req, res) => {
           discussion: discussion.body,
 		  date_posted: discussion.date_posted,
           emptyComments: emptyComments,
-		  comments: discussion.comments
+		  comments: discussion.comments,
+		  discussionId: req.params.discussionId
       }
 
       res.render('pages/search/discussions', val);
