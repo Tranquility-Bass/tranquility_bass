@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const mongoCollections = require("../config/mongoCollections")
 const artists = mongoCollections.artists;
+const songs = mongoCollections.songs;
 const validate = require("./validation");
 
 async function getSongsFromAlbum(albumId){
@@ -129,24 +130,36 @@ async function getTopSongs(){
     return top3;
 }
 
+async function createSongs(songList) {
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    songList = validate.checkInput(songList, "song list", "array");
+
+    const songCollection = await songs();
+
+    let temp = [];
+    for (let i = 0; i<songList.length; i++){
+        let val = {
+            _id: ObjectId(),
+            title : songList[i],
+            reviews : [],
+            discussions : [],
+            avgRating : 0
+        }
+
+        const newSong = await songCollection.insertOne(val);
+        if (!newSong) throw `Error inserting song`;
+        temp.push(newSong.insertedId);
+    }
+   
+    return temp;
+}
+
 async function createAlbum(artistId, title, songs) {
     if (arguments.length > 3) throw `Too many arguments passed.`
     artistId = validate.checkInput(artistId, "artist id", "string");
     if (!ObjectId.isValid(artistId)) throw `artist id is not a valid ObjectId`;
     title = validate.checkInput(title, 'title', 'string');
     songs = validate.checkInput(songs, 'songs','array');
-
-    let songList = [];
-    songs.forEach(element => {
-        let val = {
-            _id: ObjectId(),
-            title : element,
-            reviews : [],
-            discussions : [],
-            avgRating : 0
-        }
-        songList.push(val);
-    })
 
     const artistCollection = await artists();
     const getArtist = await artistCollection.findOne({_id: ObjectId(artistId)});
@@ -156,7 +169,7 @@ async function createAlbum(artistId, title, songs) {
     let newAlbum = {
       _id: ObjectId(),
       title: title,
-      songs: songList,
+      songs: songs,
       reviews : [],
       discussions : [],
       avgRating : 0
@@ -172,4 +185,4 @@ async function createAlbum(artistId, title, songs) {
     return newAlbum;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId};
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getAllSongs, getSongsFromAlbum, getSongId, createSongs};

@@ -5,7 +5,7 @@ function checkInput(val, varName, varType) {
         let i = 0;
         let arr = [];
         val.forEach(element => {
-            if (typeof element != 'string') throw `${varName} element is not a string`;
+            if (typeof element != 'string' && (varName != "songs")) throw `${varName} element is not a string`;
             let t = String.prototype.trim.call(element);
             if (t.length > 0) {
                 i ++;

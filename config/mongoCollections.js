@@ -19,5 +19,6 @@ module.exports = {
   users: getCollectionFn('users'),
   forums: getCollectionFn('discussionForums'),
   reviews: getCollectionFn('reviews'),
-  artists: getCollectionFn('artists')
+  artists: getCollectionFn('artists'),
+  songs: getCollectionFn('songs')
 };

@@ -143,6 +143,8 @@ router
         let sL = formData.albumSongs.split("\r\n");
         let songList = validate.checkInput(sL, "albumSongs", "array");
 
+        songList = await albumData.createSongs(songList);
+
         const createdAlbum = await albumData.createAlbum(artist, album, songList);
 
         if (createdAlbum) {
