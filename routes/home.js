@@ -5,6 +5,7 @@ const data = require('../data');
 const searchData = data.search;
 const artistData = data.artists;
 const albumData = data.albums;
+const userData = data.users;
 const { ObjectId } = require('mongodb');
 const xss = require('xss');
 
@@ -96,6 +97,12 @@ router.get('/discuss/:discussionId', async (req, res) => {
 	  }
 	  let emptyComments = discussion.comments.length == 0;
 
+	  let arr = [];
+	  for (let i=0; i<discussion.comments.length; i++){
+		let username = await userData.usernameFromID(discussion.comments[i].user_id.toString());
+		arr.push({username: username, comment: discussion.comments[i].comment});
+	  }
+
       let val = {
           title: discussion.title,
 		  artist: artist.name,
@@ -104,7 +111,7 @@ router.get('/discuss/:discussionId', async (req, res) => {
           discussion: discussion.body,
 		  date_posted: discussion.date_posted,
           emptyComments: emptyComments,
-		  comments: discussion.comments,
+		  comments: arr,
 		  discussionId: req.params.discussionId
       }
 

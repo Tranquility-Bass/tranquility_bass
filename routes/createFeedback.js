@@ -185,7 +185,6 @@ router
             song = await albumData.getSong(discussion.song_id.toString());
             song = song.title;
         }
-        let emptyComments = (discussion.comments.length == 0);
   
         let val = {
             title: "Leave a Comment",
@@ -216,8 +215,8 @@ router
 
     try {
         let userID = await userData.userInfo(req.session.user.username);
-        const comment = await searchData.createComment(req.params.discussionId, formData.commentResponse, userID._id.toString());
-        res.redirect(`/dicussion/${req.params.discussionId}`);
+        const comment = await searchData.createComment(req.params.discussionId, userID._id.toString(), formData.commentResponse);
+        res.redirect(`/discuss/${req.params.discussionId}`);
     }
     catch (e) {
         res.render('pages/error', {error: e, title: "Create Discussion Post Failed", link: "/", link_text: "Back To Homepage"});
