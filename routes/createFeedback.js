@@ -7,6 +7,7 @@ const userData = data.users;
 const { userInfo } = require('../data/users');
 const searchData = data.search;
 const artistData = data.artists;
+const albumData = data.albums;
 const xss = require('xss');
 
 router

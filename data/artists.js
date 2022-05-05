@@ -33,6 +33,8 @@ async function create(name){
     name = validate.checkInput(name, "name", "string");
 
     const artistCollection = await artists();
+    const existing = await artistCollection.findOne({"name" : name});
+    if (existing) throw `Artist already exists.`;
 
     let newArtist = {
       name: name,
