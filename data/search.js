@@ -3,7 +3,7 @@ const artists = mongoCollections.artists;
 const reviews = mongoCollections.reviews;
 const forums = mongoCollections.forums;
 const users = mongoCollections.users;
-const albums = require("./albums");
+const albumsData = require("./albums");
 const { ObjectId } = require('mongodb');
 const validate = require('./validation');
 const { songs } = require('../config/mongoCollections');
@@ -233,7 +233,7 @@ const likeReview = async function likeReview(reviewId, userId){
 	let artI, alI, songI;
 	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
 	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
-	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
+	(updatedReview.song) ? songI = updatedReview.song.toString() : songI = null;
 	await updateRating(artI, alI, songI);
 
 	return updatedReview;
@@ -256,14 +256,22 @@ const dislikeReview = async function dislikeReview(reviewId, userId){
 	}
 	updateInformation = await reviewsCollection.updateOne({ "_id": ObjectId(reviewId) }, { $push: {"dislikes": ObjectId(userId)} });
 	if (updateInformation["modifiedCount"] != 1) throw 'Update failed';
+
 	let updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
 	if (updatedReview == null) throw 'No review found with that ID';
+
+	if (updatedReview.likes.length + 5 <= updatedReview.dislikes.length) {
+		await reviewsCollection.updateOne({ "_id": ObjectId(reviewId) }, { $set: {"hidden": true} });
+		updatedReview = await reviewsCollection.findOne({ "_id": ObjectId(reviewId) });
+		if (updatedReview == null) throw 'No review found with that ID';
+	}
+
 	updatedReview["_id"] = updatedReview["_id"].toString();
-	
+
 	let artI, alI, songI;
 	(updatedReview.artist_id) ? artI = updatedReview.artist_id.toString() : artI = null;
 	(updatedReview.album_id) ? alI = updatedReview.album_id.toString() : alI = null;
-	(updatedReview.song_id) ? songI = updatedReview.song_id.toString() : songI = null;
+	(updatedReview.song) ? songI = updatedReview.song.toString() : songI = null;
 	await updateRating(artI, alI, songI);
 
 	return updatedReview;
@@ -277,7 +285,7 @@ const getSearchResult = async function getSearchResult(searchTerm){
 	const artistsCollection = await artists();
 	let results = [[],[],[]];
 	let artistResults = await artistsCollection.find({ name: {$regex: searchTerm, $options: "i"} }).toArray();
-	const allAlbums = await albums.getAllAlbums();
+	const allAlbums = await albumsData.getAllAlbums();
 	let albumsResults = [];
 	for (let x of allAlbums){
 		if (x.title.toLowerCase().includes(searchTerm.toLowerCase())){
@@ -406,8 +414,10 @@ async function updateRating(artistId, albumId, songId){
     let likes = 0;
     let dislikes = 0;
     reviews.forEach(element => {
-        likes += element["likes"].length;
-        dislikes += element["dislikes"].length;
+		if (element.hidden == false){
+        	likes += element["likes"].length;
+        	dislikes += element["dislikes"].length;
+		}
     })
     let avgRating;
 	(dislikes == 0) ? avgRating = likes : avgRating = Math.round(likes / dislikes);
@@ -423,7 +433,7 @@ async function updateRating(artistId, albumId, songId){
 	}
 	else if (mode == "album") {
 		const updatedRating = await artistCollection.updateOne(
-			{ "albums._id": albumId },
+			{ "albums._id": ObjectId(albumId) },
 			{'$set' : {"albums.$.avgRating" : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;
@@ -431,8 +441,8 @@ async function updateRating(artistId, albumId, songId){
 	}
 	else if (mode == "song") {
 		const updatedRating = await songCollection.updateOne(
-			{ "_id": songId },
-			{$set : {"avgRating" : avgRating}}
+			{ "_id": ObjectId(songId) },
+			{'$set' : {"avgRating" : avgRating}}
 		)
 		if (!updatedRating) throw `Error updating rating`;
 		return {ratingUpdated : true};
@@ -459,12 +469,16 @@ async function getUpperInformation(id){
 		return {artistId : gotAlbum._id, albumId : id, songId : null};
 	}
 
-	const gotSong = await artistCollection.findOne({"albums.songs" : ObjectId(id)});
-	if (gotSong) {
-		for(let i=0; i<gotSong.albums; i++){
-			if (gotSong.albums[i].includes(id)) return {artistId : gotSong._id, albumId : gotSong.albums[i]._id, songId : id}
+	const findAlbums = await albumsData.getAllAlbums();
+	for (let i=0; i<findAlbums.length; i++){
+		if (findAlbums[i].songs.includes(id)){
+			const gotSong = await artistCollection.findOne({"albums._id" : findAlbums[i]._id});
+			if (gotSong) return {artistId : gotSong._id, albumId : findAlbums[i]._id.toString(), songId : ObjectId(id)}
+			throw `Error somewhere.`;
 		}
 	}
+
+	throw `Error finding all information regarding that topic.`
 }
 
 module.exports = {

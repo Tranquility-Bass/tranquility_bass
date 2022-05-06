@@ -7,25 +7,23 @@ async function getTopArtists(){
     if (arguments.length > 0) throw `Too many arguments passed.`
     const artistCollection = await artists();
     const artistList = await artistCollection.find({}, {projection: {_id:1, name: 1, avgRating: 1}}).toArray();
-    //sort artistList based on likes
     let top3 = [];
     let highest = [0,0,0];
-    //return top 3
     artistList.forEach(element => {
         if (element.avgRating > highest[0]){
-            highest[0] = element.avgRating;
-            top3[0] = element;
+            top3.splice(0, 0, element)
+            highest.splice(0, 0, element.avgRating)
         }
         else if (element.avgRating > highest[1]) {
-            highest[1] = element.avgRating;
-            top3[1] = element;
+            top3.splice(1, 0, element)
+            highest.splice(1, 0, element.avgRating)
         }
         else if (element.avgRating > highest[2]) {
-            highest[2] = element.avgRating;
-            top3[2] = element;
+            top3.splice(2, 0, element)
+            highest.splice(2, 0, element.avgRating)
         }
     })
-    return top3;
+    return top3.splice(0,3);
 }
 
 async function create(name){

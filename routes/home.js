@@ -8,6 +8,7 @@ const albumData = data.albums;
 const userData = data.users;
 const { ObjectId } = require('mongodb');
 const xss = require('xss');
+const { reviews } = require('../config/mongoCollections');
 
 
 router.get('/', async (req, res) => {
@@ -54,7 +55,11 @@ router.get('/all/:searchId', async (req, res) => {
 	}
 	try {
       let discussions = await searchData.getDiscussions(req.params.searchId);
-	  let reviews = await searchData.getReviews(req.params.searchId);
+	  let allreviews = await searchData.getReviews(req.params.searchId);
+	  let reviews = [];
+	  for (let i=0; i<allreviews.length; i++){
+		if (allreviews[i].hidden == false) reviews.push(allreviews[i]);
+	  }
 	  let emptyDiscussions = discussions.length == 0;
       let emptyReviews = reviews.length == 0;
 
@@ -85,15 +90,18 @@ router.get('/discuss/:discussionId', async (req, res) => {
 	try {
       let discussion = await searchData.getDiscussion(req.params.discussionId);
 	  let artist = await artistData.get(discussion.artist_id.toString());
+	  let returnLink = discussion.artist_id.toString();
 	  let album = null;
 	  if (discussion.album_id) {
 		  album = await albumData.get(discussion.album_id.toString());
 		  album = album.title;
+		  returnLink = discussion.album_id.toString();
 	  }
 	  let song = null;
 	  if (discussion.song_id) {
 		  song = await albumData.getSong(discussion.song_id.toString());
 		  song = song.title;
+		  returnLink = discussion.song_id.toString();
 	  }
 	  let emptyComments = discussion.comments.length == 0;
 
@@ -112,7 +120,8 @@ router.get('/discuss/:discussionId', async (req, res) => {
 		  date_posted: discussion.date_posted,
           emptyComments: emptyComments,
 		  comments: arr,
-		  discussionId: req.params.discussionId
+		  discussionId: req.params.discussionId,
+		  link: returnLink
       }
 
       res.render('pages/search/discussions', val);
@@ -132,16 +141,19 @@ router.get('/review/:reviewId', async (req, res) => {
 	}
 	try {
       let review = await searchData.getReview(req.params.reviewId);
+	  let returnLink = review.artist_id.toString();
 	  let artist = await artistData.get(review.artist_id.toString());
 	  let album = null;
 	  if (review.album_id) {
 		  album = await albumData.get(review.album_id.toString());
 		  album = album.title;
+		  returnLink = review.album_id.toString();
 	  }
 	  let song = null;
-	  if (review.song_id) {
-		  song = await albumData.getSong(review.song_id.toString());
+	  if (review.song) {
+		  song = await albumData.getSong(review.song.toString());
 		  song = song.title;
+		  returnLink = review.song.toString();
 	  }
 
       let val = {
@@ -153,7 +165,8 @@ router.get('/review/:reviewId', async (req, res) => {
 		  date_posted: review.date_posted,
 		  id: review._id.toString(),
           likes: review.likes.length,
-		  dislikes: review.dislikes.length
+		  dislikes: review.dislikes.length,
+		  link: returnLink
       }
 
       res.render('pages/search/reviews', val);

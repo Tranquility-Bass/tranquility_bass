@@ -44,7 +44,7 @@ router
     req.params.reviewId = xss(req.params.reviewId);
 
     try {
-	  let user = await userData.userInfo(req.session.user.username);
+	    let user = await userData.userInfo(req.session.user.username);
       let updatedReview = await searchData.dislikeReview(req.params.reviewId, user._id.toString());
       res.redirect("/review/" + req.params.reviewId);
     } catch (e) {
