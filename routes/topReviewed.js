@@ -5,6 +5,7 @@ const router = express.Router();
 const data = require('../data');
 const artistsData = data.artists;
 const albumData = data.albums;
+const xss = require('xss');
 
 router
   .route('/')

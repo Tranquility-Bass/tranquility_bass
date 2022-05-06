@@ -4,6 +4,7 @@ const users = mongoCollections.users;
 const bcrypt = require('bcrypt');
 const saltRounds = 16;
 const validator = require("email-validator");
+const validate = require("./validation");
 
 
 function checkInput(val, type) {
@@ -95,4 +96,15 @@ async function checkUser(username, password) {
     }
 }
 
-module.exports = {createUser,checkUser, userInfo};
+async function usernameFromID(userID) {
+    userID = validate.checkInput(userID, "user id", "string");
+    if (!ObjectId.isValid(userID)) throw `User ID is not valid Object ID`;
+
+    const userCollection = await users();
+    const user = await userCollection.findOne({"_id" : ObjectId(userID)});
+
+    if (!user) throw `No user with that ID exists`;
+    return user.username;
+}
+
+module.exports = {createUser,checkUser, userInfo, usernameFromID};

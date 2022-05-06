@@ -13,7 +13,9 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
 	title = title.trim();
+	if (validate.checkHateSpeech(title)) throw `Title included inapproiate content.`;
 	body = body.trim();
+	if (validate.checkHateSpeech(body)) throw `Text included inapproiate content.`;
 	datePosted = datePosted.trim();
 	userId = userId.trim();
 	if (artistId === "" || title === "" || body === "" || userId === "" || datePosted === "") throw 'Artist ID, title, body, user ID, and date posted must be non empty strings';
@@ -81,6 +83,7 @@ const createComment = async function createComment(discussionId, userId, body){
 	discussionId = discussionId.trim();
 	userId = userId.trim();
 	body = body.trim();
+	if (validate.checkHateSpeech(body)) throw `Comment included inapproiate content.`;
 	if (discussionId === "" || userId === "" || body === "") throw 'Discussion ID, user ID, and body must be non empty strings';
 	if (!ObjectId.isValid(discussionId)) throw 'invalid discussion ID';
 	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
@@ -106,7 +109,9 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
 	title = title.trim();
+	if (validate.checkHateSpeech(title)) throw `Title included inapproiate content.`;
 	body = body.trim();
+	if (validate.checkHateSpeech(body)) throw `Body included inapproiate content.`;
 	datePosted = datePosted.trim();
 	userId = userId.trim();
 	if (artistId === "" || title === "" || body === "" || userId === "" || datePosted === "") throw 'Artist ID, title, body, user ID, and date posted must be non empty strings';
@@ -295,19 +300,14 @@ const getById = async function getById(searchId){
 	if (searchId === "")throw 'Search ID must be a non empty string';
 	if (!ObjectId.isValid(searchId)) throw 'Search ID must be a valid object ID';
 	let artistsCollection = await artists();
+	const songCollection = await songs();
 	let result = await artistsCollection.findOne({ "_id": ObjectId(searchId) });
 	if (result == null){
 		result = await artistsCollection.findOne({ "albums._id": ObjectId(searchId) });
 		if (result == null){
-			result = await artistsCollection.findOne({ "albums.songs._id": ObjectId(searchId) });
+			result = await songCollection.findOne({"_id" : ObjectId(searchId)})
 			if (result == null) throw 'No discussions found with that ID';
-			else {
-				for (let x of result["albums"]) {
-					for (let y of x["songs"]) {
-						if (y["_id"].equals(ObjectId(searchId))) return y;
-					}
-				}
-			}
+			return result
 		} else {
 			for (let x of result["albums"]) {
 				if (x["_id"].equals(ObjectId(searchId))) return x;
@@ -330,7 +330,6 @@ const getDiscussions = async function getDiscussions(searchId){
 	let temp;
 	for (let x of result["discussions"]){
 		temp = await forumsCollection.findOne({ "_id": ObjectId(x) });
-		if (temp == null) throw "No discussions found with that ID";
 		discussions.push(temp);
 	}
 	return discussions;
@@ -360,7 +359,6 @@ const getReviews = async function getReviews(searchId){
 	let temp;
 	for (let x of result["reviews"]){
 		temp = await reviewsCollection.findOne({ "_id": ObjectId(x) });
-		if (temp == null) throw "No reviews found with that ID";
 		allReviews.push(temp);
 	}
 	return allReviews;
@@ -377,25 +375,6 @@ const getReview = async function getReview(reviewId){
 	if (!review) throw 'No review found with that ID';
 	return review;
 }
-
-/*const remove = async function remove(albumId){
-	if (typeof albumId != 'string') throw 'Album ID must be a string';
-	albumId = albumId.trim();
-	if (albumId === "")throw 'Album ID must be a non empty string';
-	if (!ObjectId.isValid(albumId)) throw 'Album ID must be a valid object ID';
-	const bandCollection = await bands();
-	let band = await bandCollection.findOne({ "albums._id": ObjectId(albumId) });
-	const updateInfo = await bandCollection.updateOne({ _id: band["_id"]}, {$pull: {albums: {_id: ObjectId(albumId)}}});
-	if (updateInfo.modifiedCount === 0) throw `Could not delete album with id of ${albumId}`;
-	band = await bandCollection.findOne({ _id: band["_id"] });
-	let total = 0;
-	for (let x of band["albums"]){
-		total = total + x["rating"];
-	}
-	await bandCollection.updateOne({ _id : band["_id"]}, {$set: { overallRating: Math.round((total/band["albums"].length) * 10) / 10}});
-	band["_id"] = band["_id"].toString();
-	return band;
-}*/
 
 async function updateRating(artistId, albumId, songId){
 	let mode = "artist";
@@ -463,6 +442,31 @@ async function updateRating(artistId, albumId, songId){
 	}
 }
 
+async function getUpperInformation(id){
+	if (arguments.length > 1) throw `Too many arguments passed.`
+    id = validate.checkInput(id, "id",'string');
+    if (!ObjectId.isValid(id)) throw `id is not a valid ObjectId`;
+
+	const artistCollection = await artists();
+
+	const gotArtist = await artistCollection.findOne({"_id" : ObjectId(id)});
+	if (gotArtist) {
+		return {artistId : id, albumId : null, songId : null};
+	}
+
+	const gotAlbum = await artistCollection.findOne({"albums._id" : ObjectId(id)});
+	if (gotAlbum) {
+		return {artistId : gotAlbum._id, albumId : id, songId : null};
+	}
+
+	const gotSong = await artistCollection.findOne({"albums.songs" : ObjectId(id)});
+	if (gotSong) {
+		for(let i=0; i<gotSong.albums; i++){
+			if (gotSong.albums[i].includes(id)) return {artistId : gotSong._id, albumId : gotSong.albums[i]._id, songId : id}
+		}
+	}
+}
+
 module.exports = {
 	createDiscussion,
 	createComment,
@@ -476,5 +480,6 @@ module.exports = {
 	getDiscussions,
 	getDiscussion,
 	getReviews,
-	getReview
+	getReview,
+	getUpperInformation
 }
