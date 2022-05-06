@@ -33,7 +33,11 @@
     {{/each}}
 </section>
 
-<p>
-    <a href="/private/create/discussion/{{searchTerm}}">Create a Discussion Post</a>
-    <a href="/private/create/review/{{searchTerm}}">Create a Review Post</a>
-</p>
+<form action="/private/create/discussion/{{searchTerm}}">
+    <button type="submit">Create a Discussion Post</button>
+</form>
+<br>
+<form action="/private/create/review/{{searchTerm}}">
+    <button type="submit">Create a Review Post</button>
+</form>
+    

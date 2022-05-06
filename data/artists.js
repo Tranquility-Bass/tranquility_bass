@@ -32,6 +32,8 @@ async function create(name){
     if (arguments.length > 1) throw `Too many arguments passed.`
     name = validate.checkInput(name, "name", "string");
 
+    name = name.toUpperCase();
+    
     const artistCollection = await artists();
     const existing = await artistCollection.findOne({"name" : name});
     if (existing) throw `Artist already exists.`;
