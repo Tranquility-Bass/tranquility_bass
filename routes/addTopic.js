@@ -42,7 +42,7 @@ router
     try {
       let type = validate.checkInput(formData.type, "type", "string");
 
-      if (type == "artist") return res.render('pages/addTopic/addArtist', {title: "Add Artist"});
+      if (type == "artist") return res.render('pages/addTopic/addArtist', {layout: null, title: "Add Artist"});
 
       const allArtists = await artistData.getAllArtists();
       
@@ -55,7 +55,7 @@ router
         res.status(400).render('pages/addTopic/addTopicGeneral', val);
         return;
       }
-      if (type == "album") return res.render('pages/addTopic/addAlbum', {title: "Add Album", artists: allArtists});
+      if (type == "album") return res.render('pages/addTopic/addAlbum', {layout: null, title: "Add Album", artists: allArtists});
 
     } catch (e) {
         let val = {
