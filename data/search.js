@@ -217,7 +217,7 @@ const likeReview = async function likeReview(reviewId, userId){
 	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
 	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
 	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
-	if (await isReviewLiked(reviewId, userId)) throw 'Review is already liked by this user';
+	if (await isReviewLiked(reviewId, userId)) return;
 	const reviewsCollection = await reviews();
 	let updateInformation;
 	if (await isReviewDisliked(reviewId, userId)){
@@ -247,7 +247,7 @@ const dislikeReview = async function dislikeReview(reviewId, userId){
 	if (reviewId === "" || userId === "") throw 'Review ID and user ID must be non empty strings';
 	if (!ObjectId.isValid(reviewId)) throw 'invalid review ID';
 	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
-	if (await isReviewDisliked(reviewId, userId)) throw 'Review is already disliked by this user';
+	if (await isReviewDisliked(reviewId, userId)) return;
 	const reviewsCollection = await reviews();
 	let updateInformation;
 	if (await isReviewLiked(reviewId, userId)){

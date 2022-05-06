@@ -155,6 +155,9 @@ router.get('/review/:reviewId', async (req, res) => {
 		  song = song.title;
 		  returnLink = review.song.toString();
 	  }
+	  let user = await userData.userInfo(req.session.user.username);
+	  let liked = await searchData.isReviewLiked(req.params.reviewId, user._id.toString());
+	  let disliked = await searchData.isReviewDisliked(req.params.reviewId, user._id.toString());
 
       let val = {
           title: review.title,
@@ -166,7 +169,9 @@ router.get('/review/:reviewId', async (req, res) => {
 		  id: review._id.toString(),
           likes: review.likes.length,
 		  dislikes: review.dislikes.length,
-		  link: returnLink
+		  link: returnLink,
+		  alreadyLiked: liked,
+		  alreadyDisliked: disliked
       }
 
       res.render('pages/search/reviews', val);
