@@ -76,7 +76,15 @@ router
         res.redirect(`/all/${req.params.id}`);
     }
     catch (e) {
-        res.render('pages/error', {error: e, title: "Create Review Failed", link: "/", link_text: "Back To Homepage"});
+        let val = {
+            title: "Create Review",
+            hasError: true,
+            error: e,
+            type : "review",
+            id : req.params.id
+        }
+        res.status(400).render('pages/create', val);
+        return;
     }
 
   })
@@ -147,7 +155,15 @@ router
         res.redirect(`/all/${req.params.id}`);
     }
     catch (e) {
-        res.render('pages/error', {error: e, title: "Create Discussion Post Failed", link: "/", link_text: "Back To Homepage"});
+        let val = {
+            title: "Create Discussion",
+            hasError: true,
+            error: e,
+            type : "discussion",
+            id : req.params.id
+        }
+        res.status(400).render('pages/create', val);
+        return;
     }
 
   })
@@ -219,7 +235,14 @@ router
         res.redirect(`/discuss/${req.params.discussionId}`);
     }
     catch (e) {
-        res.render('pages/error', {error: e, title: "Create Discussion Post Failed", link: "/", link_text: "Back To Homepage"});
+        let val = {
+            title: "Post Comment",
+            hasError: true,
+            error: e,
+            discussionId: req.params.discussionId
+        }
+        res.status(400).render('pages/comment', val);
+        return;
     }
 
   })

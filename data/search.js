@@ -13,9 +13,9 @@ const createDiscussion = async function createDiscussion(artistId, albumId, song
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
 	title = title.trim();
-	if (validate.checkHateSpeech(title)) throw `Title included inapproiate content.`;
+	if(validate.filterHateSpeech(title)) throw `Discussion title contains profane language.`;
 	body = body.trim();
-	if (validate.checkHateSpeech(body)) throw `Text included inapproiate content.`;
+	if(validate.filterHateSpeech(body)) throw `Discussion body contains profane language.`;
 	datePosted = datePosted.trim();
 	userId = userId.trim();
 	if (artistId === "" || title === "" || body === "" || userId === "" || datePosted === "") throw 'Artist ID, title, body, user ID, and date posted must be non empty strings';
@@ -83,7 +83,7 @@ const createComment = async function createComment(discussionId, userId, body){
 	discussionId = discussionId.trim();
 	userId = userId.trim();
 	body = body.trim();
-	if (validate.checkHateSpeech(body)) throw `Comment included inapproiate content.`;
+	if(validate.filterHateSpeech(body)) throw `Comment text contains profane language.`;
 	if (discussionId === "" || userId === "" || body === "") throw 'Discussion ID, user ID, and body must be non empty strings';
 	if (!ObjectId.isValid(discussionId)) throw 'invalid discussion ID';
 	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
@@ -109,9 +109,9 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 	if (typeof artistId != 'string' || typeof title != 'string' || typeof body != 'string' || typeof userId != 'string' || typeof datePosted != 'string') throw 'Artist ID, title, body, user ID, and date posted must be strings';
 	artistId = artistId.trim();
 	title = title.trim();
-	if (validate.checkHateSpeech(title)) throw `Title included inapproiate content.`;
+	if(validate.filterHateSpeech(title)) throw `Review title contains profane language.`;
 	body = body.trim();
-	if (validate.checkHateSpeech(body)) throw `Body included inapproiate content.`;
+	if(validate.filterHateSpeech(body)) throw `Review body contains profane language.`;
 	datePosted = datePosted.trim();
 	userId = userId.trim();
 	if (artistId === "" || title === "" || body === "" || userId === "" || datePosted === "") throw 'Artist ID, title, body, user ID, and date posted must be non empty strings';

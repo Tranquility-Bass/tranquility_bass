@@ -157,7 +157,8 @@ async function createAlbum(artistId, title, songs) {
     if (!getArtist) throw `artist does not exist.`;
 
     for (let i=0; i<getArtist.albums; i++){
-        if (getArtist.albums[i].title == title) throw `Album already exists.`;
+        let temp_title = getArtist.albums[i].title;
+        if (temp_title.toLowerCase() == title.toLowerCase()) throw `Album already exists.`;
     }
 
     let newAlbum = {

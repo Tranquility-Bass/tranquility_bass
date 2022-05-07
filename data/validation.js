@@ -1,3 +1,6 @@
+var Filter = require('bad-words'),
+    filter = new Filter();
+
 function checkInput(val, varName, varType) {
     if (val == undefined) throw `${varName} is not defined`;
     if (varType == "array") {
@@ -18,7 +21,7 @@ function checkInput(val, varName, varType) {
         if (typeof val != 'string') throw `${varName} is not a string.`;
         val = String.prototype.trim.call(val);
         if (val.length == 0) throw `${varName} is empty.`;
-        if (checkHateSpeech(val)) throw `${varName} contains inappropiate content.`;
+        if(filterHateSpeech(val)) throw `${varName} contains profane language`;
         if (varName == "releaseDate") { //https://stackoverflow.com/questions/7445328/check-if-a-string-is-a-date-value
             let date = moment(val, "MM/DD/YYYY", true);
             if (!date.isValid()) throw `${varName} is not a valid date.`
@@ -74,14 +77,8 @@ function checkInput(val, varName, varType) {
     };
   };
 
-function checkHateSpeech(input) {
-    const badWords = ["bitch", "fuck", "stupid"];
-    badWords.forEach(element => {
-        if (input.includes(element)) {
-            return true;
-        }
-    })
-    return false;
+function filterHateSpeech(input) {
+    return filter.isProfane(input);
 }
 
-module.exports = {checkInput, checkHateSpeech, sortBy};
+module.exports = {checkInput, filterHateSpeech, sortBy};
