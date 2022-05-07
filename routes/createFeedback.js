@@ -28,7 +28,17 @@ router
             error: "You must be logged in to view this page.",
             route: "/private/create/review"
         });
-    }
+    } else {
+		try {
+			let user = await userData.userInfo(req.session.user.username);
+			let isReviewed = await searchData.isReviewed(req.params.id, user._id.toString());
+			if (isReviewed) {
+				return res.status(403).redirect('/all/' + req.params.id);
+			}
+		} catch (e) {
+			res.render('pages/error', {error: e, title: "Create Review", link: "/", link_text: "Back To Homepage"});
+		}
+	}
     let val = {
         title: "Create Review",
         hasError: false,

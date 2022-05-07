@@ -40,4 +40,8 @@
 <form action="/private/create/review/{{searchTerm}}">
     <button type="submit">Create a Review Post</button>
 </form>
+
+{{#if isReviewed}}
+	<p>User has already reviewed this topic</p>
+{{/if}}
     

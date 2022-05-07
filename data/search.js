@@ -175,6 +175,30 @@ const createReview = async function createReview(artistId, albumId, songId, titl
 	return newReview;
 }
 
+const isReviewed = async function isReviewed(id, userId){
+	if (arguments.length != 2) throw 'Must input two values';
+	if (typeof id != 'string' || typeof userId != 'string') throw 'Artist, album, or song ID and user ID must be strings';
+	id = id.trim();
+	userId = userId.trim();
+	if (id === "" || userId === "") throw 'Artist, album, or song ID and user ID must be non empty strings';
+	if (!ObjectId.isValid(id)) throw 'invalid artist, album, or song ID';
+	if (!ObjectId.isValid(userId)) throw 'invalid user ID';
+	const reviewsCollection = await reviews();
+	const userReviews = await reviewsCollection.find({ user_id: ObjectId(userId) }).toArray();
+	for (let x of userReviews){
+		if (x["song"] == null){
+			if (x["album_id"] == null){
+				if (x["artist_id"].equals(ObjectId(id))) return true;
+			} else {
+				if (x["album_id"].equals(ObjectId(id))) return true;
+			}
+		} else {
+			if (x["song"].equals(ObjectId(id))) return true;
+		}
+	}
+	return false;
+}
+
 const isReviewLiked = async function isReviewLiked(reviewId, userId){
 	if (arguments.length != 2) throw 'Must input two values';
 	if (typeof reviewId != 'string' || typeof userId != 'string') throw 'Review ID and user ID must be strings';
@@ -485,6 +509,7 @@ module.exports = {
 	createDiscussion,
 	createComment,
 	createReview,
+	isReviewed,
 	isReviewLiked,
 	isReviewDisliked,
 	likeReview,
