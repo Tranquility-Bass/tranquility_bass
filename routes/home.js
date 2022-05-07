@@ -62,6 +62,11 @@ router.get('/all/:searchId', async (req, res) => {
 	  }
 	  let emptyDiscussions = discussions.length == 0;
       let emptyReviews = reviews.length == 0;
+	  let isReviewed = false;
+	  if (req.session.user){
+		let user = await userData.userInfo(req.session.user.username);
+		isReviewed = await searchData.isReviewed(req.params.searchId, user._id.toString());
+	  }
 
       let val = {
           title: "Discussions and Reviews",
@@ -69,6 +74,7 @@ router.get('/all/:searchId', async (req, res) => {
           reviews: reviews,
           emptyDiscussions : emptyDiscussions,
           emptyReviews : emptyReviews,
+		  isReviewed: isReviewed,
           searchTerm: req.params.searchId
       }
 
