@@ -8,7 +8,7 @@ function checkInput(val, varName, varType) {
         let i = 0;
         let arr = [];
         val.forEach(element => {
-            if (typeof element != 'string' && (varName != "songs")) throw `${varName} element is not a string`;
+            if (typeof element != 'string' && (varName != "songs") && (varName != "delete songs")) throw `${varName} element is not a string`;
             let t = String.prototype.trim.call(element);
             if (t.length > 0) {
                 i ++;
@@ -22,16 +22,9 @@ function checkInput(val, varName, varType) {
         val = String.prototype.trim.call(val);
         if (val.length == 0) throw `${varName} is empty.`;
         if(filterHateSpeech(val)) throw `${varName} contains profane language`;
-        if (varName == "releaseDate") { //https://stackoverflow.com/questions/7445328/check-if-a-string-is-a-date-value
-            let date = moment(val, "MM/DD/YYYY", true);
-            if (!date.isValid()) throw `${varName} is not a valid date.`
-            if (date.format('YYYY') > moment().year()+1) throw `${varName} is too far in advance to be a valid date.`;
-            if (date.format('YYYY') < 1900) throw `${varName} is too far in history to be a valid date.`;
-        }
     }
     else if (varType == "int") {
         if (typeof val != 'number') throw `${varName} is not a number.`
-        if (val < 1 || val > 5) throw `${varName} is not a valid rating.`
     }
     return val;
 }

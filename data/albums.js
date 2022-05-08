@@ -145,6 +145,19 @@ async function createSongs(songList) {
     return temp;
 }
 
+async function deleteSongs(songList){
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    songList = validate.checkInput(songList, "delete songs", "array");
+
+    const songCollection = await songs();
+
+    for (let i = 0; i<songList.length; i++){
+        const delSong = await songCollection.deleteOne({"_id": ObjectId(songList[i])});
+        if (!delSong) throw `Error deleting song`;
+    }
+    return;
+}
+
 async function createAlbum(artistId, title, songs) {
     if (arguments.length > 3) throw `Too many arguments passed.`
     artistId = validate.checkInput(artistId, "artist id", "string");
@@ -156,7 +169,7 @@ async function createAlbum(artistId, title, songs) {
     const getArtist = await artistCollection.findOne({_id: ObjectId(artistId)});
     if (!getArtist) throw `artist does not exist.`;
 
-    for (let i=0; i<getArtist.albums; i++){
+    for (let i=0; i<getArtist.albums.length; i++){
         let temp_title = getArtist.albums[i].title;
         if (temp_title.toLowerCase() == title.toLowerCase()) throw `Album already exists.`;
     }
@@ -207,5 +220,15 @@ async function getSong(id) {
     return song;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getSongsFromAlbum, getSongId, createSongs, get, getSong};
+module.exports = {
+    getTopAlbums,
+    getTopSongs,
+    createAlbum,
+    getAllAlbums,
+    getSongsFromAlbum,
+    getSongId,
+    deleteSongs,
+    createSongs,
+    get,
+    getSong};
 
