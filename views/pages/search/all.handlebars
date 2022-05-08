@@ -44,4 +44,30 @@
 {{#if isReviewed}}
 	<p>User has already reviewed this topic</p>
 {{/if}}
+
+<section>
+	{{#if song}}
+		<h3>Artist</h3>
+		<a href="/all/{{artistId}}">{{artist}}</a>
+		<h4>Album</h4>
+		<a href="/all/{{albumId}}">{{album}}</a>
+	{{else}}
+		{{#if album}}
+			<h3>Artist</h3>
+			<a href="/all/{{artistId}}">{{artist}}</a>
+			<h4>Songs in {{album}}</h4>
+			{{#each songs}}
+				<a href="/all/{{_id}}">{{title}}</a>
+				<br>
+			{{/each}}
+		{{else}}
+			<h3>Albums by {{artist}}</h3>
+			{{#each albums}}
+				<a href="/all/{{_id}}">{{title}}</a>
+				<br>
+			{{/each}}
+		{{/if}}
+	{{/if}}
+	
+</section>
     

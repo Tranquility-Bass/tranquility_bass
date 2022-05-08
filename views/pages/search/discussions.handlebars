@@ -24,7 +24,11 @@
         </h7>
     {{/each}}
 
-    <p><a href="/private/create/comment/{{discussionId}}">Post a Comment</a></p>
+	<form id="comment-form" action="/private/create/comment/{{discussionId}}" method="POST">
+		<textarea id="commentResponse" name="commentResponse" rows="5" cols="40" placeholder = "Enter your comment here."></textarea>
+		<button type="submit">Post</button>
+	</form>
+
     <a href="/all/{{link}}">Back to All Reviews and Discussions</a>
 	
 </section>

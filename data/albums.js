@@ -207,5 +207,33 @@ async function getSong(id) {
     return song;
 }
 
-module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getSongsFromAlbum, getSongId, createSongs, get, getSong};
+async function getArtistFromAlbum(albumId){
+	if (arguments.length > 1) throw `Too many arguments passed.`
+    albumId = validate.checkInput(albumId, "id",'string');
+    if (!ObjectId.isValid(albumId)) throw `Albumid is not a valid ObjectId`;
+	const artistsCollection = await artists();
+	let artist = await artistsCollection.findOne({ "albums._id": ObjectId(albumId) });
+	if (!artist) throw 'No album found with that ID';
+	artist["_id"] = artist["_id"].toString();
+	return artist;
+}
+
+async function getAlbumFromSong(songId){
+	if (arguments.length > 1) throw `Too many arguments passed.`
+    songId = validate.checkInput(songId, "id",'string');
+    if (!ObjectId.isValid(songId)) throw `Songid is not a valid ObjectId`;
+	const artistsCollection = await artists();
+	let album = await artistsCollection.findOne({ "albums.songs": songId });
+	if (!album) throw 'No song found with that ID';
+	for (let x of album["albums"]){
+		if (x["songs"].includes(songId)){
+			album = x;
+			album["_id"] = album["_id"].toString();
+			return album;
+		}
+	}
+	throw 'No album found';
+}
+
+module.exports = {getTopAlbums, getTopSongs, createAlbum, getAllAlbums, getSongsFromAlbum, getSongId, createSongs, get, getSong, getArtistFromAlbum, getAlbumFromSong};
 
