@@ -1,5 +1,5 @@
 <h1 class="heading"> {{title}} </h1>
-<section class="orgDiv">
+<div class="orgDiv">
     <h3 class="heading">Top Three Artists</h3>
 
     {{#if emptyArtist}}
@@ -7,13 +7,13 @@
     {{/if}}
 
     {{#each topArtists}}
-        <h6>
+        <h5>
             <a href="/all/{{_id}}" class="navLinks">{{name}}</a>
-        </h6>
+        </h5>
     {{/each}}
-</section>
+</div>
 
-<section class="orgDiv">
+<div class="orgDiv">
     <h3 class="heading">Top Three Albums</h3>
 
     {{#if emptyAlbum}}
@@ -21,13 +21,13 @@
     {{/if}}
 
     {{#each topAlbums}}
-        <h6>
+        <h5>
             <a href="/all/{{_id}}" class="navLinks">{{title}}</a>
-        </h6>
+        </h5>
     {{/each}}
-</section>
+</div>
 
-<section class="orgDiv">
+<div class="orgDiv">
     <h3 class="heading">Top Three Songs</h3>
 
     {{#if emptySong}}
@@ -35,8 +35,8 @@
     {{/if}}
 
     {{#each topSongs}}
-        <h6>
+        <h5>
             <a href="/all/{{_id}}" class="navLinks">{{title}}</a>
-        </h6>
+        </h5>
     {{/each}}
-</section>
+</div>

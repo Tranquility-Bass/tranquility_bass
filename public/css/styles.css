@@ -41,6 +41,12 @@ body{
     text-align:center;
 }
 
+#commentResponse{
+    border-radius: 10px;
+    border: 2px solid #125965;
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
 #navBar{
     background-color: #208280;
     margin: 0;
@@ -48,6 +54,24 @@ body{
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 20px;
+}
+
+.createForm{
+    border-radius: 10px;
+    border: 2px solid #125965;
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
+.comment{
+    font-size: 14px;
+    padding-left: 10px;
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
+.allC{
+    font-size: 10px;
+    padding-left: 15px;
+    font-family: 'Trebuchet MS', sans-serif;
 }
 
 .orgDiv{

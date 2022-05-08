@@ -1,5 +1,5 @@
 <h1 class="heading"> {{title}} </h1>
-<section>
+<div>
     <h3 class="heading">Discussions</h3>
 
     {{#if emptyDiscussions}}
@@ -7,16 +7,14 @@
     {{/if}}
 
     {{#each discussions}}
-		<h6 class="heading">
+		<h4 class="heading">
             <a href="/discuss/{{_id}}" class="navLinks">{{title}}</a>
-        </h6>
-        <h7 class="heading">
-            <p>{{body}}</p>
         </h4>
+        <p class="allC">{{body}}</p>
     {{/each}}
-</section>
+</div>
 
-<section>
+<div>
     <h3 class="heading">Reviews</h3>
 
     {{#if emptyReviews}}
@@ -24,50 +22,51 @@
     {{/if}}
 
     {{#each reviews}}
-		<h6 class="heading">
+		<h4 class="heading">
             <a href="/review/{{_id}}" class="navLinks">{{title}}</a>
-        </h6>
-        <h7 class="heading">
-            <p>{{body}}</p>
         </h4>
+        <p class="allC">{{body}}</p>
     {{/each}}
-</section>
+</div>
+
+<br>
 
 <form action="/private/create/discussion/{{searchTerm}}">
-    <button type="submit" class="accButton">Create a Discussion Post</button>
+	<button type="submit" class="accButton">Create a Discussion Post</button>
 </form>
-<br>
 <form action="/private/create/review/{{searchTerm}}">
-    <button type="submit" class="accButton">Create a Review Post</button>
+	<button type="submit" class="accButton">Create a Review Post</button>
 </form>
+
+<br>
 
 {{#if isReviewed}}
 	<p>User has already reviewed this topic</p>
 {{/if}}
 
-<section>
+<div>
 	{{#if song}}
-		<h3>Artist</h3>
-		<a href="/all/{{artistId}}">{{artist}}</a>
-		<h4>Album</h4>
-		<a href="/all/{{albumId}}">{{album}}</a>
+		<h3 class="heading">Artist</h3>
+		<a href="/all/{{artistId}}" class="navLinks">{{artist}}</a>
+		<h4 class="heading">Album</h4>
+		<a href="/all/{{albumId}}" class="navLinks">{{album}}</a>
 	{{else}}
 		{{#if album}}
-			<h3>Artist</h3>
-			<a href="/all/{{artistId}}">{{artist}}</a>
-			<h4>Songs in {{album}}</h4>
+			<h3 class="heading">Artist</h3>
+			<a href="/all/{{artistId}}" class="navLinks">{{artist}}</a>
+			<h4 class="heading">Songs in {{album}}</h4>
 			{{#each songs}}
-				<a href="/all/{{_id}}">{{title}}</a>
+				<a href="/all/{{_id}}" class="navLinks">{{title}}</a>
 				<br>
 			{{/each}}
 		{{else}}
-			<h3>Albums by {{artist}}</h3>
+			<h3 class="heading">Albums by {{artist}}</h3>
 			{{#each albums}}
-				<a href="/all/{{_id}}">{{title}}</a>
+				<a href="/all/{{_id}}" class="navLinks">{{title}}</a>
 				<br>
 			{{/each}}
 		{{/if}}
 	{{/if}}
 	
-</section>
+</div>
     

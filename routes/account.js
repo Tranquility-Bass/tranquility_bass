@@ -123,9 +123,11 @@ router.post('/profile/edit', async (req, res) => {
 
         try{
             user = await users.editUser(username, newUsername, newPassword, newEmail);
+            req.session.user.username = user.username;
+            req.session.user.password = user.password;
             res.render('pages/account/profile', {title: "Account Information", username: user.username, password: newPassword, email: user.email});
         }catch(e){
-            res.render('pages/account/edit', {error: e});
+            res.render('pages/account/edit', {title: "Edit Account Information", error: e});
         }
 
     }else{

@@ -1,5 +1,5 @@
 <h1 class="heading"> {{title}} </h1>
-<section>
+<div>
     <h3 class="heading">Artists Results</h3>
 
     {{#if emptyArtist}}
@@ -7,13 +7,13 @@
     {{/if}}
 
     {{#each resultArtists}}
-        <h6 class="heading">
+        <h5 class="heading">
             <a href="/all/{{_id}}" class="navLinks">{{name}}</a>
-        </h6>
+        </h5>
     {{/each}}
-</section>
+</div>
 
-<section>
+<div>
     <h3 class="heading">Albums Results</h3>
 
     {{#if emptyAlbum}}
@@ -21,13 +21,13 @@
     {{/if}}
 
     {{#each resultAlbums}}
-        <h6 class="heading">
+        <h5 class="heading">
             <a href="/all/{{_id}}" class="navLinks">{{title}}</a>
-        </h6>
+        </h5>
     {{/each}}
-</section>
+</div>
 
-<section>
+<div>
     <h3 class="heading">Songs Results</h3>
 
     {{#if emptySong}}
@@ -35,8 +35,8 @@
     {{/if}}
 
     {{#each resultSongs}}
-        <h6 class="heading">
+        <h5 class="heading">
             <a href="/all/{{_id}}" class="navLinks">{{title}}</a>
-        </h6>
+        </h5>
     {{/each}}
-</section>
+</div>

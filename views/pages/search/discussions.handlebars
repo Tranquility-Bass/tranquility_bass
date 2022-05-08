@@ -1,36 +1,36 @@
 <h1 class="heading"> {{title}} </h1>
-<section>
-	<h4 class="heading">{{artist}}</h4>
+<div>
+	<h3 class="heading">Topic: {{artist}}</h3>
 	
 	{{#if album}}
-        <h4 class="heading">{{album}}</h4>
+        <h3 class="heading">Topic: {{album}}</h3>
     {{/if}}
 	
 	{{#if song}}
-        <h4 class="heading">{{song}}</h4>
+        <h3 class="heading">Topic: {{song}}</h3>
     {{/if}}
 	
-    <h7 class="heading">Date Posted: {{date_posted}}</h7>
+    <h6 class="heading">Date Posted: {{date_posted}}</h6>
     <p>{{discussion}}</p>
 
+    <h4 class="heading">Comments:</h4>
     {{#if emptyComments}}
         <p>No Comments Found for this Discussion</p>
     {{/if}}
 
     {{#each comments}}
-		<h6 class="heading">{{username}}</h6>
-        <h7 class="heading">
-            <p>{{comment}}</p>
-        </h7>
+        <p class="comment"><strong>{{username}}</strong> : {{comment}}</p>
     {{/each}}
 
 	<form id="comment-form" action="/private/create/comment/{{discussionId}}" method="POST">
-        <label for="commentResponse">Enter your comment here:</label>
+        <label for="commentResponse" class="accLabels">Enter your comment here:</label>
         <br>
 		<textarea id="commentResponse" name="commentResponse" rows="5" cols="40" placeholder = "Enter your comment here."></textarea>
-		<button type="submit">Post</button>
+		<br>
+        <button type="submit" class="button2">Post</button>
 	</form>
 
+    <br>
     <a href="/all/{{link}}" class="navLinks">Back to All Reviews and Discussions</a>
 	
-</section>
+</div>
