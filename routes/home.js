@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) =>{
     
-    let {searchTerm} = xss(req.body);
+    let {searchTerm} = req.body;
 
 	searchTerm = xss(searchTerm);
 

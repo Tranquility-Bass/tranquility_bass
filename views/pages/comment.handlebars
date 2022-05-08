@@ -1,11 +1,11 @@
 <section>
   {{#if hasError}}
-  <p>{{error}}</p>
+  <div class="errorDiv"><p class="errorP">{{error}}</p></div>
   {{/if}}
-  <h3>{{discussionTitle}}</h3>
+  <h3 class="heading">{{discussionTitle}}</h3>
   <p>{{discussionBody}}</p>
   <form id="comment-form" action="/private/create/comment/{{discussionId}}" method="POST">
     <textarea id="commentResponse" name="commentResponse" rows="10" cols="40">Enter your comment here.</textarea>
-    <button type="submit">Post</button>
+    <button type="submit" class="button2">Post</button>
   </form>
 </section>

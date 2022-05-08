@@ -1,9 +1,9 @@
 <section>
   {{#if hasError}}
-  <p>{{error}}</p>
+  <div class="errorDiv"><p class="errorP">{{error}}</p></div>
   {{/if}}
   <form id="addAlbum-form" action="/private/addTopic/album" method="POST">
-    <label for="artist">Artist Name: </label>
+    <label for="artist" class="accLabels">Artist Name: </label>
     <select id="artist" name="artist">
     {{#each artists}}
     <option value={{_id}}>{{name}}</option>
@@ -11,14 +11,14 @@
     </select>
     <br>
     <br>
-    <label for="albumName">Album Name: </label>
-    <input type="text" id="albumName" name="albumName">
+    <label for="albumName" class="accLabels">Album Name: </label>
+    <input type="text" id="albumName" name="albumName" class="accInput">
     <br>
     <br>
-    <label for="albumSongs">Songs: </label>
+    <label for="albumSongs" class="accLabels">Songs: </label>
     <br>
     <br>
     <textarea id="albumSongs" name="albumSongs" rows="6" cols="40">Enter each song on a new line.</textarea>
-    <button type="submit">Next</button>
+    <button type="submit" class="accButton">Next</button>
   </form>
 </section>

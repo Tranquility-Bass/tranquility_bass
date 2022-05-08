@@ -1,13 +1,13 @@
 <section>
   {{#if hasError}}
-  <p>{{error}}</p>
+  <div class="errorDiv"><p class="errorP">{{error}}</p></div>
   {{/if}}
   <form id="create{{type}}-form" action="/private/create/{{type}}/{{id}}" method="POST">
-    <label for="testTitle">Title:</label>
+    <label for="testTitle" class="accLabels">Title:</label>
     <input type="text" id="{{type}}Name" name="{{type}}Name">
     <br>
     <textarea id="{{type}}Body" name="{{type}}Body" rows="10" cols="40">Enter your {{type}} here.</textarea>
     <br>
-    <button type="submit">Post</button>
+    <button type="submit" class="button2">Post</button>
   </form>
 </section>

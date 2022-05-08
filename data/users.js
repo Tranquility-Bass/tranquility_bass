@@ -17,7 +17,7 @@ function checkInput(val, type) {
         for (let i=0; i<val.length; i++){
             if (!validchars.includes(val[i].toLowerCase())) throw `Invalid character ${val[i]} supplied in username.`;
         }
-        val = val.toLowerCase();
+        //val = val.toLowerCase();
     }
     if (type == 'password') {
         if (val.length < 6) throw `Password is too short`;
@@ -71,6 +71,53 @@ async function userInfo(username){
     return user;
 }
 
+async function editUser(username, newUsername, newPassword, newEmail){
+    if (arguments.length > 4) throw `Too many arguments passed.`
+    username = checkInput(username,'username');
+    newUsername = checkInput(newUsername, 'username');
+    newPassword = checkInput(newPassword, 'password');
+    newEmail = checkInput(newEmail, 'email');
+    
+    const userCollection = await users();
+
+    let user = await userCollection.findOne({ username: username });
+    if (!user) throw `Either the username or password is invalid`;
+
+    let id = user["_id"];
+    const hash = await bcrypt.hash(newPassword, saltRounds);
+
+    const updatedAccount = {
+        username: newUsername,
+        password: hash,
+        email: newEmail,
+        discForumPosts: user["discForumPosts"],
+        reviewPosts: user["reviewPosts"]
+    };
+
+    const updatedInfo = await userCollection.updateOne({_id: ObjectId(id)}, {$set: updatedAccount});
+    if(updatedInfo.modifiedCount === 0) throw 'Could not update account successfully';
+
+    user = await userCollection.findOne({_id: ObjectId(id)});
+    return user;
+}
+
+async function deleteUser(username){
+    if (arguments.length > 1) throw `Too many arguments passed.`
+    username = checkInput(username,'username');
+
+    const userCollection = await users();
+
+    let user = await userCollection.findOne({ username: username });
+    if (!user) throw `Either the username or password is invalid`;
+
+    let id = user["_id"];
+
+    const deletionInfo = await userCollection.deleteOne({_id: ObjectId(id)});
+    if(deletionInfo.deletedCount === 0) throw 'Could not delete account with id of ' + id;
+    
+    return "So Long " + username + "! Account Deleted";
+}
+
 async function checkUser(username, password) {
     if (arguments.length > 2) throw `Too many arguments passed.`
     username = checkInput(username,'username');
@@ -107,4 +154,4 @@ async function usernameFromID(userID) {
     return user.username;
 }
 
-module.exports = {createUser,checkUser, userInfo, usernameFromID};
+module.exports = {createUser,checkUser, userInfo, editUser, deleteUser, usernameFromID};

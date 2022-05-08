@@ -98,5 +98,65 @@ router.get('/profile', async (req, res) => {
     }
 });
 
+router.get('/profile/edit', async (req, res) => {
+    if(req.session.user){
+        res.render('pages/account/edit', {title: "Edit Account Information"});
+    }else{
+        res.render('pages/account/error', {title: "Error", error: "You are not logged in!", link: '/account/login', link_text: "Click Here to Login"})
+    }
+});
+
+router.post('/profile/edit', async (req, res) => {
+
+    if(req.session.user){
+        let {username, password} = req.session.user;
+        let user = await users.userInfo(username);
+        let {newUsername, newPassword, newEmail} = req.body;
+
+        newUsername = xss(newUsername);
+        newPassword = xss(newPassword);
+        newEmail = xss(newEmail);
+
+        if(!newUsername || !newPassword || !newEmail){
+            res.render('pages/account/edit', {title: "Edit Account Information", error: "Fields Cannot Be Empty"});
+        }
+
+        try{
+            user = await users.editUser(username, newUsername, newPassword, newEmail);
+            res.render('pages/account/profile', {title: "Account Information", username: user.username, password: newPassword, email: user.email});
+        }catch(e){
+            res.render('pages/account/edit', {error: e});
+        }
+
+    }else{
+        res.render('pages/account/error', {title: "Error", error: "You are not logged in!", link: '/account/login', link_text: "Click Here to Login"})
+    }
+});
+
+router.get('/profile/delete', async (req, res) => {
+    if(req.session.user){
+        res.render('pages/account/delete', {title: "Delete Account"});
+    }else{
+        res.render('pages/account/error', {title: "Error", error: "You are not logged in!", link: '/account/login', link_text: "Click Here to Login"})
+    }
+});
+
+router.post('/profile/delete', async (req, res) => {
+
+    if(req.session.user){
+        let {username, password} = req.session.user;
+        try{
+            let deleteMsg = await users.deleteUser(username);
+            req.session.destroy();
+            res.render('pages/account/error', {title: "Account Deleted", error: deleteMsg, link: '/', link_text: "Back To Homepage"});
+        }catch(e){
+            res.render('pages/account/edit', {error: e});
+        }
+
+    }else{
+        res.render('pages/account/error', {title: "Error", error: "You are not logged in!", link: '/account/login', link_text: "Click Here to Login"})
+    }
+});
+
 
 module.exports = router;

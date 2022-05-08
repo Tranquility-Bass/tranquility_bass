@@ -1,44 +1,44 @@
-<h1> {{title}} </h1>
+<h1 class="heading"> {{title}} </h1>
 <section>
-    <h3>Discussions</h3>
+    <h3 class="heading">Discussions</h3>
 
     {{#if emptyDiscussions}}
         <p>No Discussions Found for that topic</p>
     {{/if}}
 
     {{#each discussions}}
-		<h6>
-            <a href="/discuss/{{_id}}">{{title}}</a>
+		<h6 class="heading">
+            <a href="/discuss/{{_id}}" class="navLinks">{{title}}</a>
         </h6>
-        <h7>
+        <h7 class="heading">
             <p>{{body}}</p>
         </h7>
     {{/each}}
 </section>
 
 <section>
-    <h3>Reviews</h3>
+    <h3 class="heading">Reviews</h3>
 
     {{#if emptyReviews}}
         <p>No Reviews Found for that topic</p>
     {{/if}}
 
     {{#each reviews}}
-		<h6>
-            <a href="/review/{{_id}}">{{title}}</a>
+		<h6 class="heading">
+            <a href="/review/{{_id}}" class="navLinks">{{title}}</a>
         </h6>
-        <h7>
+        <h7 class="heading">
             <p>{{body}}</p>
         </h7>
     {{/each}}
 </section>
 
 <form action="/private/create/discussion/{{searchTerm}}">
-    <button type="submit">Create a Discussion Post</button>
+    <button type="submit" class="accButton">Create a Discussion Post</button>
 </form>
 <br>
 <form action="/private/create/review/{{searchTerm}}">
-    <button type="submit">Create a Review Post</button>
+    <button type="submit" class="accButton">Create a Review Post</button>
 </form>
 
 {{#if isReviewed}}

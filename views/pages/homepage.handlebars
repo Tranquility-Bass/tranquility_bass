@@ -1,25 +1,26 @@
-<header>
+<header id="homeHeader">
         <ul> 
             {{#if username}}
-                <li style="display:inline; padding: 15px">Welcome {{{username}}}</li>
+                <li class="navLinks">Welcome {{{username}}}</li>
+                <li class="navLinks"><a href="/account/profile">View My Profile</a></li>
             {{else}}
-                <li style="display:inline; padding: 15px"><a href="/account/login">Login</a></li>
-                <li style="display:inline; padding: 15px"><a href="/account/signup">Sign Up</a></li>
+                <li class="navLinks"><a href="/account/login">Login</a></li>
+                <li class="navLinks"><a href="/account/signup">Sign Up</a></li>
             {{/if}}
         </ul>
 </header>
 
-<h1 style="text-align:center">Tranquility & Bass</h1>
+<h1 id="title">Tranquility & Bass</h1>
 
-<main>
-    <h3>Search</h3>
+<main id="searchDiv">
     <form method="POST" action="/" id="search-form">
-        <input type="text" id="searchTerm" name="searchTerm">
-        <button type="submit">Submit</button>
+        <label for="searchterm" class="accLabels">Search:  </label> 
+        <input type="text" id="searchTerm" name="searchTerm" class="accInput">
+        <button type="submit" class="button2">Submit</button>
     </form>
-    <p>Search any artist, album, or song!</p>
+    <p class="accLabels" style="text-align:center">Search any artist, album, or song!</p>
     <br>
     {{#if error}}
-        <div style="border:5px; border-color:red">{{error}}</div>
+        <div class="errorDiv"><p class="errorP">{{error}}</p></div>
     {{/if}}
 </main>
