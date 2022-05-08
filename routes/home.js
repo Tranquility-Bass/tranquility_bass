@@ -75,6 +75,7 @@ router.get('/all/:searchId', async (req, res) => {
 	  let song;
 	  let albums;
 	  let songs;
+	  let name;
 	  if (topic["albums"]){
 		artist = topic["name"];
 		albums = [];
@@ -82,6 +83,7 @@ router.get('/all/:searchId', async (req, res) => {
 			x["_id"] = x["_id"].toString();
 			albums.push(x);
 		}
+		name = topic["name"];
 	  } else if (topic["songs"]){
 		album = topic["title"];
 		artist = await albumData.getArtistFromAlbum(req.params.searchId);
@@ -93,6 +95,7 @@ router.get('/all/:searchId', async (req, res) => {
 			s["_id"] = s["_id"].toString();
 			songs.push(s);
 		}
+		name = topic["title"];
 	  } else {
 		album = await albumData.getAlbumFromSong(req.params.searchId);
 		artist = await albumData.getArtistFromAlbum(album["_id"]);
@@ -101,10 +104,11 @@ router.get('/all/:searchId', async (req, res) => {
 		artistId = artist["_id"];
 		artist = artist["name"];
 		song = true;
+		name = topic["title"];
 	  }
 
       let val = {
-          title: "Discussions and Reviews",
+          title: name + " Discussions and Reviews",
           discussions: discussions,
           reviews: reviews,
           emptyDiscussions : emptyDiscussions,
