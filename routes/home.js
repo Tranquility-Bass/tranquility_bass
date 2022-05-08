@@ -67,6 +67,41 @@ router.get('/all/:searchId', async (req, res) => {
 		let user = await userData.userInfo(req.session.user.username);
 		isReviewed = await searchData.isReviewed(req.params.searchId, user._id.toString());
 	  }
+	  let topic = await searchData.getById(req.params.searchId);
+	  let artist;
+	  let artistId;
+	  let album;
+	  let albumId;
+	  let song;
+	  let albums;
+	  let songs;
+	  if (topic["albums"]){
+		artist = topic["name"];
+		albums = [];
+		for (let x of topic["albums"]){
+			x["_id"] = x["_id"].toString();
+			albums.push(x);
+		}
+	  } else if (topic["songs"]){
+		album = topic["title"];
+		artist = await albumData.getArtistFromAlbum(req.params.searchId);
+		artistId = artist["_id"];
+		artist = artist["name"];
+		songs = [];
+		for (let x of topic["songs"]){
+			let s = await albumData.getSong(x);
+			s["_id"] = s["_id"].toString();
+			songs.push(s);
+		}
+	  } else {
+		album = await albumData.getAlbumFromSong(req.params.searchId);
+		artist = await albumData.getArtistFromAlbum(album["_id"]);
+		albumId = album["_id"];
+		album = album["title"];
+		artistId = artist["_id"];
+		artist = artist["name"];
+		song = true;
+	  }
 
       let val = {
           title: "Discussions and Reviews",
@@ -75,7 +110,14 @@ router.get('/all/:searchId', async (req, res) => {
           emptyDiscussions : emptyDiscussions,
           emptyReviews : emptyReviews,
 		  isReviewed: isReviewed,
-          searchTerm: req.params.searchId
+          searchTerm: req.params.searchId,
+		  artist: artist,
+		  artistId: artistId,
+		  album: album,
+		  albumId: albumId,
+		  albums: albums,
+		  song: song,
+		  songs: songs
       }
 
       res.render('pages/search/all', val);
