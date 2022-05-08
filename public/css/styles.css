@@ -42,7 +42,7 @@ body{
 }
 
 #navBar{
-    background-color: #59bca8;
+    background-color: #208280;
     margin: 0;
     padding-top: 20px;
     padding-left: 20px;
@@ -118,4 +118,8 @@ body{
     border-radius: 25px;
     border: 2px solid #125965;
     font-family: 'Trebuchet MS', sans-serif;
+}
+
+#navBar a{
+    color: white;
 }

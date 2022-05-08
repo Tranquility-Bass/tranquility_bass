@@ -25,6 +25,8 @@
     {{/each}}
 
 	<form id="comment-form" action="/private/create/comment/{{discussionId}}" method="POST">
+        <label for="commentResponse">Enter your comment here:</label>
+        <br>
 		<textarea id="commentResponse" name="commentResponse" rows="5" cols="40" placeholder = "Enter your comment here."></textarea>
 		<button type="submit">Post</button>
 	</form>
