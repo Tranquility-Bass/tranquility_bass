@@ -15,9 +15,9 @@ router.get('/', async (req, res) => {
     
     if(req.session.user){
         const { username , password } = req.session.user;
-        res.render('pages/homepage', {username: username});
+        res.render('pages/homepage', {title:"Tranquility & Bass", username: username});
     }else{
-        res.render('pages/homepage');
+        res.render('pages/homepage', {title:"Tranquility & Bass"});
     }
 
 });
@@ -38,9 +38,9 @@ router.post('/', async (req, res) =>{
 
 router.get('/about', async (req, res) => {
     if(req.session.user){
-        res.render('pages/about');
+        res.render('pages/about', {title:"About Us"});
     }else{
-        res.render('pages/about');
+        res.render('pages/about', {title:"About Us"});
     }
 });
 
