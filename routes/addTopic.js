@@ -26,7 +26,7 @@ router
     return;
   })
   .post(async (req, res) => {
-    let formData = xss(req.body);
+    let formData = (req.body);
     if (!formData.type) {
         let val = {
             title: "Add a Topic",
@@ -71,7 +71,7 @@ router
 router
   .route("/artist")
   .post(async (req, res) => {
-    let formData = xss(req.body);
+    let formData = (req.body);
     if (!formData.artistName) {
         let val = {
             title: "Add Artist",
@@ -114,7 +114,7 @@ router
 router
   .route("/album")
   .post(async (req, res) => {
-    let formData = xss(req.body);
+    let formData = (req.body);
     if (!formData.artist) {
         let val = {
             title: "Add Album",

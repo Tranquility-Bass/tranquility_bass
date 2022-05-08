@@ -10,7 +10,7 @@ router
   .get(async (req, res) => {
     try {
       if (typeof req.params.searchTerm != 'string') throw 'Search term must be a string';
-      req.params.searchTerm = xss(req.params.searchTerm.trim());
+      req.params.searchTerm = (req.params.searchTerm.trim());
       if (req.params.searchTerm === "")throw 'Search term must be a non empty string';
     } catch (e) {
       res.render('pages/error', {error: e, title: "Search Results", link: "/", link_text: "Back To Homepage"});

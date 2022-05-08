@@ -49,7 +49,7 @@ router
     return;
   })
   .post(async (req, res) => {
-    let formData = xss(req.body);
+    let formData = (req.body);
     if (!formData.reviewName) {
         let val = {
             title: "Create Review",
@@ -128,7 +128,7 @@ router
     return;
   })
   .post(async (req, res) => {
-    let formData = xss(req.body);
+    let formData = (req.body);
     if (!formData.discussionName) {
         let val = {
             title: "Create Discussion Post",
@@ -225,7 +225,7 @@ router
       }
   })
   .post(async (req, res) => {
-    let formData = xss(req.body);
+    let formData = (req.body);
     if (!formData.commentResponse) {
         let val = {
             title: "Post Comment",
