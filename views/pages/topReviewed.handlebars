@@ -1,6 +1,6 @@
-<h1> {{title}} </h1>
-<section>
-    <h3>Top Three Artists</h3>
+<h1 class="heading"> {{title}} </h1>
+<section class="orgDiv">
+    <h3 class="heading">Top Three Artists</h3>
 
     {{#if emptyArtist}}
         <p>No Popular Artists Found</p>
@@ -8,13 +8,13 @@
 
     {{#each topArtists}}
         <h6>
-            <a href="/all/{{_id}}">{{name}}</a>
+            <a href="/all/{{_id}}" class="navLinks">{{name}}</a>
         </h6>
     {{/each}}
 </section>
 
-<section>
-    <h3>Top Three Albums</h3>
+<section class="orgDiv">
+    <h3 class="heading">Top Three Albums</h3>
 
     {{#if emptyAlbum}}
         <p>No Popular Albums Found</p>
@@ -22,13 +22,13 @@
 
     {{#each topAlbums}}
         <h6>
-            <a href="/all/{{_id}}">{{title}}</a>
+            <a href="/all/{{_id}}" class="navLinks">{{title}}</a>
         </h6>
     {{/each}}
 </section>
 
-<section>
-    <h3>Top Three Songs</h3>
+<section class="orgDiv">
+    <h3 class="heading">Top Three Songs</h3>
 
     {{#if emptySong}}
         <p>No Popular Songs Found</p>
@@ -36,7 +36,7 @@
 
     {{#each topSongs}}
         <h6>
-            <a href="/all/{{_id}}">{{title}}</a>
+            <a href="/all/{{_id}}" class="navLinks">{{title}}</a>
         </h6>
     {{/each}}
 </section>

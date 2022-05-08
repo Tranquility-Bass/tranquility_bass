@@ -1,16 +1,16 @@
-<h1> {{title}} </h1>
+<h1 class="heading"> {{title}} </h1>
 <section>
-	<h4>{{artist}}</h4>
+	<h4 class="heading">{{artist}}</h4>
 	
 	{{#if album}}
-        <h4>{{album}}</h4>
+        <h4 class="heading">{{album}}</h4>
     {{/if}}
 	
 	{{#if song}}
-        <h4>{{song}}</h4>
+        <h4 class="heading">{{song}}</h4>
     {{/if}}
 	
-    <h7>Date Posted: {{date_posted}}</h7>
+    <h7 class="heading">Date Posted: {{date_posted}}</h7>
     <p>{{discussion}}</p>
 
     {{#if emptyComments}}
@@ -18,8 +18,8 @@
     {{/if}}
 
     {{#each comments}}
-		<h6>{{username}}</h6>
-        <h7>
+		<h6 class="heading">{{username}}</h6>
+        <h7 class="heading">
             <p>{{comment}}</p>
         </h7>
     {{/each}}
@@ -29,6 +29,6 @@
 		<button type="submit">Post</button>
 	</form>
 
-    <a href="/all/{{link}}">Back to All Reviews and Discussions</a>
+    <a href="/all/{{link}}" class="navLinks">Back to All Reviews and Discussions</a>
 	
 </section>

@@ -26,7 +26,7 @@ router
     return;
   })
   .post(async (req, res) => {
-    let formData = req.body;
+    let formData = (req.body);
     if (!formData.type) {
         let val = {
             title: "Add a Topic",
@@ -71,7 +71,7 @@ router
 router
   .route("/artist")
   .post(async (req, res) => {
-    let formData = req.body;
+    let formData = (req.body);
     if (!formData.artistName) {
         let val = {
             title: "Add Artist",
@@ -114,7 +114,7 @@ router
 router
   .route("/album")
   .post(async (req, res) => {
-    let formData = req.body;
+    let formData = (req.body);
     if (!formData.artist) {
         let val = {
             title: "Add Album",
@@ -146,14 +146,29 @@ router
     formData.artist = xss(formData.artist);
     formData.albumName = xss(formData.albumName);
     formData.albumSongs = xss(formData.albumSongs);
+    let songList;
+    let songsCreated = false;
+
+    const allArtists = await artistData.getAllArtists();
+      
+      if (allArtists.length == 0) {
+        let val = {
+            title: "Add a Topic",
+            hasError: true,
+            error: "No artists exist. Must add artist first."
+        }
+        res.status(400).render('pages/addTopic/addTopicGeneral', val);
+        return;
+    }
 
     try {
         let artist = validate.checkInput(formData.artist, "artist name", "string");
         let album = validate.checkInput(formData.albumName, "album name", "string");
         let sL = formData.albumSongs.split("\r\n");
-        let songList = validate.checkInput(sL, "albumSongs", "array");
+        songList = validate.checkInput(sL, "albumSongs", "array");
 
         songList = await albumData.createSongs(songList);
+        if (songList) songsCreated = true;
 
         const createdAlbum = await albumData.createAlbum(artist, album, songList);
 
@@ -169,14 +184,28 @@ router
         }
   
       } catch (e) {
-          let val = {
-              title: "Add Album",
-              hasError: true,
-              error: e
-          }
-          res.status(400).render('pages/addTopic/addAlbum', val);
-          return;
-      }
+            try {
+                if (songsCreated) await albumData.deleteSongs(songList);
+                let val = {
+                    title: "Add Album",
+                    hasError: true,
+                    error: e,
+                    artists: allArtists
+                }
+                res.status(400).render('pages/addTopic/addAlbum', val);
+                return;
+            }
+            catch (r) {
+                let val = {
+                    title: "Add Album",
+                    hasError: true,
+                    error: e + "\n" + r,
+                    artists: allArtists
+                }
+                res.status(400).render('pages/addTopic/addAlbum', val);
+                return;
+            }
+        }
   })
 
 module.exports = router;

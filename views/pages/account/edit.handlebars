@@ -1,0 +1,35 @@
+<h3 class="accLabels">{{{title}}}</h3>
+
+<form method="POST" action="/account/profile/edit" id="edit-form">
+    <label for="newUsername" class="accLabels">New Username: </label> 
+    <input type="text" id="newUsername" name="newUsername" class="accInput">
+
+    <br>
+    <br>
+
+    <label for="newPassword" class="accLabels">New Password:  </label> 
+    <input type="text" id="newPassword" name="newPassword" class="accInput">
+
+    <br>
+    <br>
+
+    <label for="newEmail" class="accLabels">New Email:  </label> 
+    <input type="text" id="newEmail" name="newEmail" class="accInput">  
+
+    <br>
+    <br>   
+
+    <button type="submit" class="accButton">Submit</button>
+</form>
+
+<br>
+<br>
+
+<a href="/account/profile" class="navLinks">Back to Profile Information</a>
+
+<br>
+<br>
+
+{{#if error}}
+    <div class="errorDiv"><p class="errorP">{{error}}</p></div>
+{{/if}}

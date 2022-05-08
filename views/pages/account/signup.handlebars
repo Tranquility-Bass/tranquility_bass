@@ -1,38 +1,38 @@
 <section>
-    <h1>{{title}}</h1>
+    <h1 class="accLabels">{{title}}</h1>
     <form method="POST" action="/account/signup" id="signup-form">
-        <label for="username">Username: </label> 
-        <input type="text" id="username" name="username">
+        <label for="username" class="accLabels">Username: </label> 
+        <input type="text" id="username" name="username" class="accInput">
 
         <br>
         <br>
 
-        <label for="password">Password: </label> 
-        <input type="password" id="password" name="password">
+        <label for="password" class="accLabels">Password: </label> 
+        <input type="password" id="password" name="password" class="accInput">
 
         <br>
         <br>
 
-        <label for="email">Email: </label>
-        <input type="text" id="email" name="email">
+        <label for="email" class="accLabels">Email: </label>
+        <input type="text" id="email" name="email" class="accInput">
 
         <br>
         <br>
 
-        <button type="submit">Submit</button>
+        <button type="submit" class="accButton">Submit</button>
     </form>
 
     <br>
 
     <div>
-        <a href="/account/login">Already have an account? Click here to login!</a>
+        <a href="/account/login" class="navLinks">Already have an account? Click here to login!</a>
     </div>
 
     <br>
     <br>
 
     {{#if error}}
-        <div>{{error}}</div>
+        <div class="errorDiv"><p class="errorP">{{error}}</p></div>
     {{/if}}
     
 </section>

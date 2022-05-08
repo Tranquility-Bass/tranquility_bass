@@ -1,32 +1,32 @@
-<h1> {{title}} </h1>
+<h1 class="heading"> {{title}} </h1>
 <section>
-	<h2>{{artist}}</h2>
+	<h2 class="heading">{{artist}}</h2>
 	
 	{{#if album}}
-        <h3>{{album}}</h3>
+        <h3 class="heading">{{album}}</h3>
     {{/if}}
 	
 	{{#if song}}
-        <h3>{{song}}</h3>
+        <h3 class="heading">{{song}}</h3>
     {{/if}}
 	
-    <h5>{{review}}</h5>
+    <h5 class="heading">{{review}}</h5>
 
     <p>Number of likes: {{likes}}</p>
 	<form id="review-like" action="/private/review/like/{{id}}" method="POST">
-		<button type="submit">Like</button>
+		<button type="submit" class="button2">Like</button>
 	</form>
 	{{#if alreadyLiked}}
         <p>You have liked this review</p>
     {{/if}}
 	<p>Number of dislikes: {{dislikes}}</p>
 	<form id="review-dislike" action="/private/review/dislike/{{id}}" method="POST">
-		<button type="submit">Dislike</button>
+		<button type="submit" class="button2">Dislike</button>
 	</form>
 	{{#if alreadyDisliked}}
         <p>You have disliked this review</p>
     {{/if}}
 	
 	<p>Date Posted: {{date_posted}}</p>
-	<a href="/all/{{link}}">Back to All Reviews and Discussions</a>
+	<a href="/all/{{link}}" class="navLinks">Back to All Reviews and Discussions</a>
 </section>

@@ -49,7 +49,7 @@ router
     return;
   })
   .post(async (req, res) => {
-    let formData = req.body;
+    let formData = (req.body);
     if (!formData.reviewName) {
         let val = {
             title: "Create Review",
@@ -128,7 +128,7 @@ router
     return;
   })
   .post(async (req, res) => {
-    let formData = req.body;
+    let formData = (req.body);
     if (!formData.discussionName) {
         let val = {
             title: "Create Discussion Post",
@@ -183,7 +183,7 @@ router
   .get(async (req, res) => {
     try {
 		if (typeof req.params.discussionId != 'string') throw 'Id must be a string';
-		req.params.discussionId = req.params.discussionId.trim();
+		req.params.discussionId = xss(req.params.discussionId.trim());
 		if (req.params.discussionId === "")throw 'Id must be a non empty string';
 	} catch (e) {
 		res.render('pages/error', {error: e, title: "Comment on Discussion", link: "/", link_text: "Back To Homepage"});
@@ -225,7 +225,7 @@ router
       }
   })
   .post(async (req, res) => {
-    let formData = req.body;
+    let formData = (req.body);
     if (!formData.commentResponse) {
         let val = {
             title: "Post Comment",

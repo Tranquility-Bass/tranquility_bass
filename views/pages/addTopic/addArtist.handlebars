@@ -1,10 +1,10 @@
 <section>
   {{#if hasError}}
-  <p>{{error}}</p>
+  <div class="errorDiv"><p class="errorP">{{error}}</p></div>
   {{/if}}
   <form id="addTopic-form" action="/private/addTopic/artist" method="POST">
-    <label for="artistName">Artist</label>
-    <input type="text" id="artistName" name="artistName" placeholder="Artist">
-    <button type="submit">Next</button>
+    <label for="artistName" class="accLabels">Artist</label>
+    <input type="text" id="artistName" name="artistName" placeholder="Artist" class="accInput">
+    <button type="submit" class="accButton">Next</button>
   </form>
 </section>

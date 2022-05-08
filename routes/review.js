@@ -11,7 +11,7 @@ router
   .post(async (req, res) => {
 	  try {
       if (typeof req.params.reviewId != 'string') throw 'Review ID must be a string';
-      req.params.reviewId = req.params.reviewId.trim();
+      req.params.reviewId = (req.params.reviewId.trim());
       if (req.params.reviewId === "")throw 'Review ID must be a non empty string';
       if (!ObjectId.isValid(req.params.reviewId)) throw 'invalid review ID';
     } catch (e) {
@@ -34,7 +34,7 @@ router
   .post(async (req, res) => {
 	try {
 		if (typeof req.params.reviewId != 'string') throw 'Review ID must be a string';
-		req.params.reviewId = req.params.reviewId.trim();
+		req.params.reviewId = (req.params.reviewId.trim());
 		if (req.params.reviewId === "")throw 'Review ID must be a non empty string';
 		if (!ObjectId.isValid(req.params.reviewId)) throw 'invalid review ID';
 	} catch (e) {

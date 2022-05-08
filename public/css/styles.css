@@ -1,0 +1,121 @@
+.color1 {color: #243143;}
+.color2 {color: #1b4253;}
+.color3 {color: #125965;}
+.color4 {color: #208280;}
+.color5 {color: #59bca8;}
+.color6 {color: #d2f5ee;}
+
+p{
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #1b4253;
+}
+
+li{
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #1b4253;
+}
+
+body{
+    background-color: #d2f5ee;
+}
+
+#title{
+    text-align: center;
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #1b4253;
+    padding-bottom: 20px;
+}
+
+#homeHeader{
+    text-align: right;
+}
+
+#searchDiv{
+    margin: auto;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #59bca8;
+}
+
+#search-form{
+    text-align:center;
+}
+
+#navBar{
+    background-color: #59bca8;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+}
+
+.orgDiv{
+    background-color: #59bca8;
+    padding: 20px;
+    margin: auto;
+}
+
+.errorDiv{
+    background-color: #125965;
+    padding: 20px;
+}
+
+.errorP{
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #d2f5ee;
+}
+
+.heading{
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #1b4253;
+}
+
+.navLinks{
+    font-family: 'Trebuchet MS', sans-serif;
+    display:inline; 
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.nav2Links{
+    font-family: 'Trebuchet MS', sans-serif;
+    display:inline; 
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.accLabels{
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #243143;
+}
+
+.accButton{
+    background-color: #59bca8;;
+    border: none;
+    color: #243143;
+    padding: 8px 16px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    font-family: 'Trebuchet MS', sans-serif;
+    border-radius: 25px;
+}
+
+.button2{
+    background-color: #243143;
+    border: none;
+    color: #59bca8;
+    padding: 4px 8px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    font-family: 'Trebuchet MS', sans-serif;
+    border-radius: 25px;
+}
+
+.accInput{
+    border-radius: 25px;
+    border: 2px solid #125965;
+    font-family: 'Trebuchet MS', sans-serif;
+}

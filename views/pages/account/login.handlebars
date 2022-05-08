@@ -1,33 +1,33 @@
 <section>
-    <h1>{{title}}</h1>
+    <h1 class="accLabels">{{title}}</h1>
     {{! -- <p id="routeTo" hidden>{{route}}
     <form method="POST" action="/account/login" id="login-form">
-        <label for="username">Username: </label> 
-        <input type="text" id="username" name="username">
+        <label for="username" class="accLabels">Username: </label> 
+        <input type="text" id="username" name="username" class="accInput">
 
         <br>
         <br>
 
-        <label for="password">Password:  </label> 
-        <input type="password" id="password" name="password">
+        <label for="password" class="accLabels">Password:  </label> 
+        <input type="password" id="password" name="password" class="accInput">
 
         <br>
         <br>
 
-        <button type="submit">Submit</button>
+        <button type="submit" class="accButton">Submit</button>
     </form>
 
     <br>
 
     <div>
-        <a href="/account/signup">Don't have an account? Click here to sign-up!</a>
+        <a href="/account/signup" class="navLinks">Don't have an account? Click here to sign-up!</a>
     </div>
 
     <br>
     <br>
 
     {{#if error}}
-        <div>{{error}}</div>
+        <div class="errorDiv"><p class="errorP">{{error}}</p></div>
     {{/if}}
 
 </section>
