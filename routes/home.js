@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) =>{
     
-    let {searchTerm} = xss(req.body);
+    let {searchTerm} = (req.body);
 
 	searchTerm = xss(searchTerm);
 
@@ -47,7 +47,7 @@ router.get('/about', async (req, res) => {
 router.get('/all/:searchId', async (req, res) => {
 	try {
 		if (typeof req.params.searchId != 'string') throw 'Search ID must be a string';
-		req.params.searchId = xss(req.params.searchId.trim());
+		req.params.searchId = (req.params.searchId.trim());
 		if (req.params.searchId === "")throw 'Search ID must be a non empty string';
 		if (!ObjectId.isValid(req.params.searchId)) throw 'invalid search ID';
 	} catch (e) {
@@ -87,7 +87,7 @@ router.get('/all/:searchId', async (req, res) => {
 router.get('/discuss/:discussionId', async (req, res) => {
 	try {
 		if (typeof req.params.discussionId != 'string') throw 'Discussion ID must be a string';
-		req.params.discussionId = xss(req.params.discussionId.trim());
+		req.params.discussionId = (req.params.discussionId.trim());
 		if (req.params.discussionId === "")throw 'Discussion ID must be a non empty string';
 		if (!ObjectId.isValid(req.params.discussionId)) throw 'invalid discussion ID';
 	} catch (e) {
@@ -139,7 +139,7 @@ router.get('/discuss/:discussionId', async (req, res) => {
 router.get('/review/:reviewId', async (req, res) => {
 	try {
 		if (typeof req.params.reviewId != 'string') throw 'Review ID must be a string';
-		req.params.reviewId = xss(req.params.reviewId.trim());
+		req.params.reviewId = (req.params.reviewId.trim());
 		if (req.params.reviewId === "")throw 'Review ID must be a non empty string';
 		if (!ObjectId.isValid(req.params.reviewId)) throw 'invalid review ID';
 	} catch (e) {
