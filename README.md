@@ -3,9 +3,10 @@
 Welcome to Tranquility & Bass! Our music review and discussion based website allows users to express opinions on musical artists, albums, and songs. 
 
 You can download our repo to your local file system. Our project uses the Node.js environment. Once downloaded, open a terminal and navigate to the folder that contains the repo. Use the following terminal commands to run the project:
-    To install the nessecary packages: npm install
-    To populate the database: npm run seed
-    To start the website: npm start
+   
+   To install the necessary packages: npm install
+   To populate the database: npm run seed
+   To start the website: npm start
     
 Once the website is up and running, you can go to http://localhost:3000 in your browser. You will be presented with our home page. From here, you can login or sign up for an account, view our about us page, search for an artist/song/album, view the top reviewed topics, or add a topic.
 
