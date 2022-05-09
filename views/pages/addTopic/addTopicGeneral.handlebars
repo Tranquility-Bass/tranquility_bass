@@ -2,6 +2,7 @@
   {{#if hasError}}
   <div class="errorDiv"><p class="errorP">{{error}}</p></div>
   {{/if}}
+  <p id="errorP"></p>
   <form id="addTopic-form" action="/private/addTopic" method="POST">
     <label for="type" class="accLabels">Topic Type</label>
     <select id="type" name="type">
